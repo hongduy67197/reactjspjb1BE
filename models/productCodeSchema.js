@@ -2,10 +2,15 @@ const mongoose = require('./dbConnect')
 
 const productCodeSchema = mongoose.Schema(
     {
-        idCatagories: [{ type: String, ref: 'catagories' }],
+        idCategories: [{ type: String, ref: 'categories' }],
         productName: String,
         thumNail: String,
-        brand: String,
+        productType: String,
+        performanceProduct: String,
+        cameraProduct: String,
+        specialFeatures: String,
+        design: String,
+        panel: String,
     }, { collection: 'productCode' }
 )
 

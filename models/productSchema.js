@@ -5,10 +5,21 @@ const productSchema = mongoose.Schema(
         idProductCode: { type: String, ref: 'productCode' },
         price: Number,
         storage: Number,
-        thumNail: String,
+        productPic: [{ type: String }],
         color: String,
         ram: String,
-        rom: String,
+        productType: String,
+        performanceProduct: String,
+        cameraProduct: String,
+        specialFeatures: String,
+        design: String,
+        panel: String,
+        suggest: {
+            type: String,
+            enum: ['true', 'fales'],
+            required: true,
+            trim: true,
+        }
     }, { collection: 'product' }
 )
 
