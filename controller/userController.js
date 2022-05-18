@@ -80,7 +80,7 @@ exports.editUserInfor = async function (req, res) {
                 username: req.body.username,
                 address: req.body.address,
                 phone: req.body.phone,
-                avatar: link,
+                avatar: '/' + link,
             }
         )
         res.json(userEdit)

@@ -8,6 +8,7 @@ const userSchema = mongoose.Schema(
         address: String,
         phone: String,
         avatar: String,
+        code: String,
         role: { type: String, default: 'user' }
     }, { collection: 'users' }
 )

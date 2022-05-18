@@ -19,9 +19,10 @@ exports.getListCategories = async function (req, res) {
 exports.createCategories = async function (req, res) {
     try {
         let link = req.file.path
+        console.log(22, link);
         let newCategories = await categoriesModel.create({
             categoriesName: req.body.categoriesName,
-            thumpNail: link,
+            thumpNail: '/' + link,
         })
         res.status(200).json(newCategories)
     } catch (error) {
@@ -36,7 +37,7 @@ exports.editCategories = async function (req, res) {
             { _id: req.params.idCategories },
             {
                 categoriesName: req.body.categoriesName,
-                thumpNail: newLink,
+                thumpNail: '/' + newLink,
             }
         )
         res.status(200).json(fixCategories)
