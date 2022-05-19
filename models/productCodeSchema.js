@@ -11,6 +11,7 @@ const productCodeSchema = mongoose.Schema(
         specialFeatures: String,
         design: String,
         panel: String,
+        createDate: Date,
     }, { collection: 'productCode' }
 )
 

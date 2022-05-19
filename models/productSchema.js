@@ -4,6 +4,7 @@ const productSchema = mongoose.Schema(
     {
         idProductCode: { type: String, ref: 'productCode' },
         price: Number,
+        priceRange: String,
         storage: Number,
         productPic: [{ type: String }],
         color: String,
@@ -14,8 +15,10 @@ const productSchema = mongoose.Schema(
         specialFeatures: String,
         design: String,
         panel: String,
+        createDate: Date,
         suggest: {
             type: String,
+            default: 'fales',
             enum: ['true', 'fales'],
             required: true,
             trim: true,

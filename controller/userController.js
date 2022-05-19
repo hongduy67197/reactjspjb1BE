@@ -7,13 +7,13 @@ const codeCheck = new CodeCheck()
 const multer = require('multer')
 const upload = multer({ dest: 'upload/' })
 const jwt = require('jsonwebtoken')
+const productModel = require('../models/productSchema')
+const producCodeModel = require('../models/productCodeSchema')
 
 exports.register = async function (req, res) {
     try {
         const { password, email } = req.body;
-        console.log(password, email);
         const alreadyExistEmail = await userModel.findOne({ email: email })
-        const abc = await userModel.find();
         if (alreadyExistEmail) {
             return res.status(400).json({ status: 'Email already exists' })
         } else {
@@ -73,18 +73,100 @@ exports.login = async (req, res) => {
 
 exports.editUserInfor = async function (req, res) {
     try {
-        let link = req.file.path
-        let userEdit = await userModel.updateOne(
-            { _id: req.params.idUser },
-            {
-                username: req.body.username,
-                address: req.body.address,
-                phone: req.body.phone,
-                avatar: '/' + link,
-            }
-        )
+        let userEdit;
+        if (req.file) {
+            let link = req.file.path
+            userEdit = await userModel.updateOne(
+                { _id: req.params.idUser },
+                {
+                    username: req.body.username,
+                    address: req.body.address,
+                    phone: req.body.phone,
+                    avatar: '/' + link,
+                }
+            )
+        } else {
+            userEdit = await userModel.updateOne(
+                { _id: req.params.idUser },
+                {
+                    username: req.body.username,
+                    address: req.body.address,
+                    phone: req.body.phone,
+                }
+            )
+        }
         res.json(userEdit)
     } catch (error) {
         res.json(error)
+    }
+}
+
+exports.getListCarts = async function (req, res) {
+    try {
+        let userId = req.params.userId
+        let listCartsUser = await cartsModel.find({ idUser: userId }).populate('listProduct.idProduct')
+        res.json(listCartsUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.checkIdProduct = async function (req, res) {
+    try {
+        let productCodeSelect = await producCodeModel.find(
+            { productName: req.query.productName }
+        )
+        let idProductCodecheck = productCodeSelect._id
+        let searchIdProduct = await productModel.find({
+            idProductCode: idProductCodecheck,
+            color: req.body.color,
+            ram: req.body.ram,
+            cameraProduct: req.body.cameraProduct,
+        })
+        res.json(searchIdProduct)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.updateCarts = async function (req, res) {
+    try {
+        let idProduct = req.body.idProduct
+        let quantity = req.body.quantity
+        let searchProduct = await cartsModel.findOne({
+            _id: req.query.cartsId
+        })
+
+        let oldquantity;
+        for (let i = 0; i < searchProduct.listProduct.length; i++) {
+            if (idProduct === searchProduct.listProduct[i].idProduct) {
+                oldquantity = searchProduct.listProduct[i].quantity
+            }
+        }
+        if (oldquantity) {
+            let newQuantity = quantity
+            let updateCartsQuantity = await cartsModel.updateOne(
+                { _id: req.query.cartsId, "listProducts.idproduct": idProduct },
+                { $set: { "listProducts.$.quantity": newQuantity } }
+
+            )
+            res.json(updateCartsQuantity)
+        } else {
+            let fixCarts = await cartsModel.updateOne(
+                { _id: req.query.cartsId },
+                {
+                    cartsPrice: req.body.cartsPrice,
+                    $push: {
+                        listProduct: {
+                            idProduct: idProduct,
+                            quantity: quantity,
+                        }
+                    }
+                }
+            )
+            res.json(fixCarts)
+        }
+    } catch (error) {
+        console.log(error);
     }
 }

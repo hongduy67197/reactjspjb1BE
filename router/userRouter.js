@@ -20,6 +20,6 @@ const upload = multer({ storage: storage })
 router.get('/:email/:code', userController.verifyEmail)
 router.post('/register', userController.register)
 router.post('/login', userController.login)
-router.put('/:idUser', userController.editUserInfor)
+router.put('/:idUser', upload.single('avatar'), userController.editUserInfor)
 
 module.exports = router
