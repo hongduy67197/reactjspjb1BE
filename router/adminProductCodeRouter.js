@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage: storage })
-router.get('/list')
+router.get('/list', adminController.getListProductCode)
 router.get('/', adminController.searchProduct)
 router.post('/', upload.single('thumNail'), adminController.createProductCode)
 router.put('/:idProductCode', upload.single('thumNail'), adminController.editProductCode)
