@@ -9,6 +9,7 @@ const upload = multer({ dest: 'upload/' })
 const jwt = require('jsonwebtoken')
 const productModel = require('../models/productSchema')
 const producCodeModel = require('../models/productCodeSchema')
+const ordersModel = require('../models/orderSchema')
 
 exports.register = async function (req, res) {
     try {
@@ -103,7 +104,7 @@ exports.editUserInfor = async function (req, res) {
 
 exports.getListCarts = async function (req, res) {
     try {
-        let userId = req.params.userId
+        let userId = req.query.userId
         let listCartsUser = await cartsModel.find({ idUser: userId }).populate('listProduct.idProduct')
         res.json(listCartsUser)
     } catch (error) {
@@ -166,6 +167,28 @@ exports.updateCarts = async function (req, res) {
             )
             res.json(fixCarts)
         }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.followOrderUser = async function (req, res) {
+    try {
+        let listOrderUser = await ordersModel.find(
+            { idUser: req.params.idUser }
+        ).populate('listProduct.idProduct').populate('idUser')
+        res.json(listOrderUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.deleteOrderUser = async function (req, res) {
+    try {
+        let dropOrderUser = await ordersModel.deleteOne(
+            { _id: req.params.idOrder }
+        )
+        res.json(dropOrderUser)
     } catch (error) {
         console.log(error);
     }

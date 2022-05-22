@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const adminController = require('../controller/adminController')
-const multer = require('multer')
 const path = require('path')
+const multer = require('multer')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './views/assets/img/categoriesPic')
+        cb(null, './views/assets/img/avatar')
     },
     filename: function (req, file, cb) {
         cb(
@@ -14,10 +14,10 @@ const storage = multer.diskStorage({
         )
     }
 })
-const upload = multer({ storage: storage });
-router.get('/', adminController.getListCategories)
-router.post('/', upload.single('thumpNail'), adminController.createCategories)
-router.put('/:idCategories', adminController.editCategories)
-router.delete('/:idCategories', adminController.deleteCategories)
+const upload = multer({ storage: storage })
+router.get('/', adminController.getListUser)
+router.put('/:idUser', upload.single('avatar'), adminController.updateUserInfor)
+router.delete('/:idUser', adminController.deleteUser)
+
 
 module.exports = router

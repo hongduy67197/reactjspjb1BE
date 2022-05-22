@@ -4,6 +4,7 @@ const orderSchema = mongoose.Schema(
     {
         idUser: { type: String, ref: 'users' },
         address: String,
+        total: Number,
         phone: String,
         listProduct: [
             {
@@ -16,7 +17,7 @@ const orderSchema = mongoose.Schema(
             required: true,
             trim: true,
         },
-    }, { collection: 'orders' }
+    }, { collection: 'orders', timestamps: true }
 )
 
 let ordersModel = mongoose.model('orders', orderSchema)

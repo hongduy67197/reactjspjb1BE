@@ -2,6 +2,7 @@ const categoriesModel = require('../models/categoriesSchema')
 const productModel = require('../models/productSchema')
 const producCodeModel = require('../models/productCodeSchema')
 const userModel = require('../models/userSchema')
+const orderModel = require('../models/orderSchema')
 const { comparePassword } = require('../services/auth')
 const multer = require('multer')
 const upload = multer({ dest: 'upload/' })
@@ -188,7 +189,7 @@ exports.getInforProduct = async function (req, res) {
     try {
         let productSelecter = await productModel.findOne(
             { _id: req.params.idProduct }
-        ).populate('idCategories')
+        ).populate('idProductCode')
         res.json(productSelecter)
     } catch (error) {
         console.log(error);
@@ -299,5 +300,103 @@ exports.deleteProduct = async function (req, res) {
         res.json(dropProduct)
     } catch (error) {
         console.log(error);
+    }
+}
+
+exports.getListUser = async function (req, res) {
+    try {
+        let listUser = await userModel.find()
+        res.json(listUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.updateUserInfor = async function (req, res) {
+    try {
+        let updateUser
+        if (req.file) {
+            let link = req.file.path
+            updateUser = await userModel.updateOne(
+                { _id: req.params.idUser },
+                {
+                    username: req.body.username,
+                    address: req.body.address,
+                    phone: req.body.phone,
+                    avatar: '/' + link,
+                }
+            )
+        } else {
+            updateUser = await userModel.updateOne(
+                { _id: req.params.idUser },
+                {
+                    username: req.body.username,
+                    address: req.body.address,
+                    phone: req.body.phone,
+                }
+            )
+        }
+        res.json(updateUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.deleteUser = async function (req, res) {
+    try {
+        let dropUser = userModel.deleteOne(
+            { _id: req.params.idUser }
+        )
+        res.json(dropUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getListOrderAd = async function (req, res) {
+    try {
+        let listOrderAd = await orderModel.find()
+        res.json(listOrderAd)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getListOrderFromUser = async function (req, res) {
+    try {
+        let listOrderFromUser = await orderModel.find(
+            { idUser: req.params.idUer }
+        ).populate('listProduct.idProduct').populate('idUser')
+        res.json(listOrderFromUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.editOrder = async function (req, res) {
+    try {
+        let fixOrder = await orderModel.updateOne(
+            { _id: req.params.idOrder },
+            {
+                address: req.body.address,
+                total: req.body.total,
+                phone: req.body.phone,
+                status: req.body.status
+            }
+        )
+        res.json(fixOrder)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.deleteOrder = async function (req, res) {
+    try {
+        let dropOrder = await orderModel.deleteOne(
+            { _id: req.param.idOrder }
+        )
+        res.json(dropOrder)
+    } catch (error) {
+        console.log();
     }
 }

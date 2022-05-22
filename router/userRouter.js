@@ -22,4 +22,15 @@ router.post('/register', userController.register)
 router.post('/login', userController.login)
 router.put('/:idUser', upload.single('avatar'), userController.editUserInfor)
 
+// carts
+router.get('/carts', userController.getListCarts)
+router.put('/carts', userController.updateCarts)
+
+// product
+router.post('/product', userController.checkIdProduct)
+
+// order 
+router.get('/order', userController.followOrderUser)
+router.delete('/order/:idOrder', userController.deleteOrderUser)
+
 module.exports = router
