@@ -78,7 +78,7 @@ exports.deleteCategories = async function (req, res) {
 exports.searchProduct = async function (req, res) {
     try {
         let searchProductList = await producCodeModel.find(
-            { productNameEN: { $regex: `.*${req.query.search}*` } }
+            { productName: { $regex: `.*${req.query.search}*` } }
         ).populate('idCategories')
         res.json(searchProductList)
     } catch (error) {
