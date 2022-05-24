@@ -406,3 +406,18 @@ exports.deleteOrder = async function (req, res) {
         console.log();
     }
 }
+
+
+exports.testCreateUser = async function (req, res) {
+    try {
+        let abc = await userModel.create(
+            {
+                email: req.body.email,
+                password: req.body.password
+            }
+        )
+        res.json(abc)
+    } catch (error) {
+        console.log(error);
+    }
+}
