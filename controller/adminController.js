@@ -29,6 +29,7 @@ exports.createCategories = async function (req, res) {
         } else {
             newCategories = await categoriesModel.create({
                 categoriesName: req.body.categoriesName,
+                thumpNail: req.body.thumpNail
             })
         }
         res.status(200).json(newCategories)
@@ -55,6 +56,7 @@ exports.editCategories = async function (req, res) {
                 { _id: req.params.idCategories },
                 {
                     categoriesName: req.body.categoriesName,
+                    thumpNail: req.body.thumpNail
                 }
             )
         }
@@ -119,6 +121,7 @@ exports.createProductCode = async function (req, res) {
                 newProductCode = await producCodeModel.create({
                     idCategories: req.body.idCategories,
                     productName: req.body.productName,
+                    thumNail: req.body.thumNail,
                     productType: req.body.productType,
                     performanceProduct: req.body.performanceProduct,
                     cameraProduct: req.body.cameraProduct,
@@ -159,6 +162,7 @@ exports.editProductCode = async function (req, res) {
                 {
                     idCategories: req.body.idCategories,
                     productName: req.body.productName,
+                    thumNail: req.body.thumNail,
                     productType: req.body.productType,
                     performanceProduct: req.body.performanceProduct,
                     cameraProduct: req.body.cameraProduct,
@@ -226,6 +230,7 @@ exports.createProduct = async function (req, res) {
                     price: req.body.price,
                     priceRange: req.body.priceRange,
                     storage: req.body.storage,
+                    productPic: req.body.productPic,
                     color: req.body.color,
                     ram: req.body.ram,
                     rom: req.body.rom,
@@ -277,6 +282,7 @@ exports.editProduct = async function (req, res) {
                     price: req.body.price,
                     priceRange: req.body.priceRange,
                     storage: req.body.storage,
+                    productPic: req.body.productPic,
                     color: req.body.color,
                     ram: req.body.ram,
                     rom: req.body.rom,
@@ -338,6 +344,7 @@ exports.updateUserInfor = async function (req, res) {
                     username: req.body.username,
                     address: req.body.address,
                     phone: req.body.phone,
+                    avatar: req.body.avatar,
                     role: req.body.role,
                 }
             )

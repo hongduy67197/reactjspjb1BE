@@ -16,6 +16,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage })
 router.get('/', adminController.getListUser)
+router.post('/', adminController.testCreateUser)
 router.put('/:idUser', upload.single('avatar'), adminController.updateUserInfor)
 router.delete('/:idUser', adminController.deleteUser)
 
