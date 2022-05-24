@@ -9,6 +9,7 @@ const productSchema = mongoose.Schema(
         productPic: [{ type: String }],
         color: String,
         ram: String,
+        rom: String,
         productType: String,
         performanceProduct: String,
         cameraProduct: String,

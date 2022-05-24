@@ -45,9 +45,9 @@ exports.verifyEmail = async (req, res) => {
         user.email = email;
         user.code = code;
         await user.save()
-        return res.status(200).send('create succes')
+        res.status(200).send('create succes')
     } catch (error) {
-        return res.status(400).send({ message: error })
+        res.status(400).send({ message: error })
     }
 }
 

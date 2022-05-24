@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 const categoriesRouter = require('./adminCategoriesRouter')
 const productCodeRouetr = require('./adminProductCodeRouter')
-const productRouyer = require('./adminProductCodeRouter')
+const productRouyer = require('./adminProductRouter')
 const userRouter = require('./adminUserRouter')
 const orderRouter = require('./adminOrderRouter')
 

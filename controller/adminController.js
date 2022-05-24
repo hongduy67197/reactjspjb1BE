@@ -209,6 +209,7 @@ exports.createProduct = async function (req, res) {
                     productPic: '/' + req.file.path,
                     color: req.body.color,
                     ram: req.body.ram,
+                    rom: req.body.rom,
                     productType: req.body.productType,
                     performanceProduct: req.body.performanceProduct,
                     cameraProduct: req.body.cameraProduct,
@@ -227,6 +228,7 @@ exports.createProduct = async function (req, res) {
                     storage: req.body.storage,
                     color: req.body.color,
                     ram: req.body.ram,
+                    rom: req.body.rom,
                     productType: req.body.productType,
                     performanceProduct: req.body.performanceProduct,
                     cameraProduct: req.body.cameraProduct,
@@ -257,6 +259,7 @@ exports.editProduct = async function (req, res) {
                     productPic: '/' + req.file.path,
                     color: req.body.color,
                     ram: req.body.ram,
+                    rom: req.body.rom,
                     productType: req.body.productType,
                     performanceProduct: req.body.performanceProduct,
                     cameraProduct: req.body.cameraProduct,
@@ -276,6 +279,7 @@ exports.editProduct = async function (req, res) {
                     storage: req.body.storage,
                     color: req.body.color,
                     ram: req.body.ram,
+                    rom: req.body.rom,
                     productType: req.body.productType,
                     performanceProduct: req.body.performanceProduct,
                     cameraProduct: req.body.cameraProduct,
@@ -324,6 +328,7 @@ exports.updateUserInfor = async function (req, res) {
                     address: req.body.address,
                     phone: req.body.phone,
                     avatar: '/' + link,
+                    role: req.body.role,
                 }
             )
         } else {
@@ -333,6 +338,7 @@ exports.updateUserInfor = async function (req, res) {
                     username: req.body.username,
                     address: req.body.address,
                     phone: req.body.phone,
+                    role: req.body.role,
                 }
             )
         }
