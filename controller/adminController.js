@@ -366,7 +366,7 @@ exports.updateUserInfor = async function (req, res) {
 
 exports.deleteUser = async function (req, res) {
     try {
-        let dropUser = userModel.deleteOne(
+        let dropUser = await userModel.deleteOne(
             { _id: req.params.idUser }
         )
         res.json(dropUser)
