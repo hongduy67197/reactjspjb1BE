@@ -189,6 +189,15 @@ exports.deleteProductCode = async function (req, res) {
     }
 }
 
+exports.getListProduct = async function (req, res) {
+    try {
+        let listProduct = await productModel.find().populate('idProductCode')
+        res.json(listProduct)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.getInforProduct = async function (req, res) {
     try {
         let productSelecter = await productModel.findOne(
