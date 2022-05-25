@@ -141,6 +141,17 @@ exports.checkIdProduct = async function (req, res) {
     }
 }
 
+exports.getFillterProductCode = async function (req, res) {
+    try {
+        let listProductCode = await producCodeModel.find(
+            { idCategories: req.query.idCategories }
+        )
+        res.json(listProductCode)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.getInforListProductCode = async function (req, res) {
     try {
         let getProductCode = await producCodeModel.findOne(

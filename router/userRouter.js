@@ -28,6 +28,9 @@ router.put('/:idUser', upload.single('avatar'), userController.editUserInfor)
 router.get('/carts', userController.getListCarts)
 router.put('/carts', userController.updateCarts)
 
+// productCode
+router.get('/fillter', userController.getFillterProductCode)
+
 // product
 router.get('/product_details', userController.getInforListProductCode)
 router.post('/product', userController.checkIdProduct)
