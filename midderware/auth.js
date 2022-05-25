@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 
 async function checkRoleUser(req, res, next) {
     try {
-        let token = req.cookies.user
+        let token = req.headers.authorization
         if (token) {
             let id = jwt.verify(token, 'projectFEB1')
             let checkIdUser = await userModel.findOne(
@@ -24,7 +24,7 @@ async function checkRoleUser(req, res, next) {
 
 async function checkToken(req, res, next) {
     try {
-        let token = req.cookies.user
+        let token = req.headers.authorization
         if (token) {
             let searchTokenUser = await userModel.findOne(
                 { token: token }
