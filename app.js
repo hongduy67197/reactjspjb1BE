@@ -4,11 +4,13 @@ const app = express()
 const cors = require('cors')
 const port = 3150
 const Router = require('./router')
+const cookie = require('cookie-parser')
 
 app.use('/views', express.static(path.join(__dirname, './views')))
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(cors())
+app.use(cookie())
 app.use('/', Router)
 app.listen(port, () => {
     console.log(`serve listen in localhost ${port}`);

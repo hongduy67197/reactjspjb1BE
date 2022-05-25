@@ -73,6 +73,15 @@ exports.login = async (req, res) => {
     }
 }
 
+exports.getUserInfor = async function (req, res) {
+    try {
+        console.log(req.user);
+        res.json(req.user)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.editUserInfor = async function (req, res) {
     try {
         let userEdit;
