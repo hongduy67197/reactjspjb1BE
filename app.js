@@ -12,6 +12,6 @@ app.use(express.json())
 app.use(cors())
 app.use(cookie())
 app.use('/', Router)
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
     console.log(`serve listen in localhost ${port}`);
 })
