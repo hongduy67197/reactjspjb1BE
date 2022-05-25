@@ -141,6 +141,20 @@ exports.checkIdProduct = async function (req, res) {
     }
 }
 
+exports.getInforListProductCode = async function (req, res) {
+    try {
+        let getProductCode = await producCodeModel.findOne(
+            { productName: req.query.productName }
+        )
+        let idProductCodeSelect = getProductCode._id
+        let listProductFollow = await productModel.find(
+            { idProductCode: idProductCodeSelect }
+        )
+        res.json({ listProduct: listProductFollow, productCode: getProductCode })
+    } catch (error) {
+        console.log(error);
+    }
+}
 exports.updateCarts = async function (req, res) {
     try {
         let idProduct = req.body.idProduct

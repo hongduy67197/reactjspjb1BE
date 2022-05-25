@@ -29,7 +29,7 @@ router.get('/carts', userController.getListCarts)
 router.put('/carts', userController.updateCarts)
 
 // product
-
+router.get('/product_details', userController.getInforListProductCode)
 router.post('/product', userController.checkIdProduct)
 
 // order 
