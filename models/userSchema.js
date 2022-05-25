@@ -9,6 +9,7 @@ const userSchema = mongoose.Schema(
         phone: String,
         avatar: String,
         code: String,
+        token: String,
         role: { type: String, default: 'user' }
     }, { collection: 'users' }
 )

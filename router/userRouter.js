@@ -30,7 +30,9 @@ router.put('/carts', userController.updateCarts)
 router.post('/product', userController.checkIdProduct)
 
 // order 
-router.get('/order', userController.followOrderUser)
+router.get('/orders/:idUser', userController.followOrderUser)
+router.get('/order/:idOrder', userController.getInforOrderSelect)
+router.post('/order', userController.createOrderUser)
 router.delete('/order/:idOrder', userController.deleteOrderUser)
 
 module.exports = router

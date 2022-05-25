@@ -64,6 +64,7 @@ exports.login = async (req, res) => {
             return res.json({ status: 'undifind password' })
         } else {
             let token = jwt.sign({ id: user._id }, 'projectFEB1')
+            await userModel.updateOne({ _id: user._id }, { token })
             res.cookie('user', token, { expires: new Date(Date.now() + 900000) })
             res.json({ data: { token: token, role: user.role }, mess: 'oke' })
         }
@@ -179,6 +180,50 @@ exports.followOrderUser = async function (req, res) {
             { idUser: req.params.idUser }
         ).populate('listProduct.idProduct').populate('idUser')
         res.json(listOrderUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getInforOrderSelect = async function (req, res) {
+    try {
+        let inforOrderSelect = await ordersModel.findOne(
+            { _id: req.params.idOrder }
+        ).populate('listProduct.idProduct')
+        res.json(inforOrderSelect)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.createOrderUser = async function (req, res) {
+    try {
+        let listProduct = await cartsModel.find({ idUser: req.body.idUser })
+        let listProductOrder;
+        listProductOrder = listProduct[0].listProduct
+        let newOrderUser = await ordersModel.create(
+            {
+                idUser: req.body.idUser,
+                address: req.body.address,
+                total: req.body.total,
+                phone: req.body.phone,
+                listProduct: listProductOrder,
+                status: 'pending',
+            }
+        )
+        let olderQuality = listProduct[0].listProduct
+        for (let elm of olderQuality) {
+            let CartsQuality = elm.quantity
+            await productModel.updateOne(
+                { _id: elm.idProduct },
+                { $inc: { storage: -CartsQuality } }
+            )
+        }
+        let clearCartsUser = await cartsModel.updateOne(
+            { idUser: req.body.idUser },
+            { listProduct: [] }
+        )
+        res.json(newOrderUser)
     } catch (error) {
         console.log(error);
     }
