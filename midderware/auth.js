@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 
 async function checkRoleUser(req, res, next) {
     try {
-        let token = req.cookies.user
+        let token = req.headers.authorization
         if (token) {
             let id = jwt.verify(token, 'projectFEB1')
             let checkIdUser = await userModel.findOne(
@@ -22,4 +22,30 @@ async function checkRoleUser(req, res, next) {
     }
 }
 
-module.exports = { checkRoleUser }
+async function checkToken(req, res, next) {
+    try {
+        let token = req.headers.authorization
+        if (token) {
+            let searchTokenUser = await userModel.findOne(
+                { token: token }
+            )
+            if (searchTokenUser) {
+                let id = jwt.verify(token, 'projectFEB1')
+                if (id) {
+                    delete searchTokenUser._doc.token
+                    delete searchTokenUser._doc.password
+                    req.user = searchTokenUser
+                    next()
+                }
+            } else {
+                res.json('cant not find user')
+            }
+        } else {
+            res.json('cant not find token')
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports = { checkRoleUser, checkToken }
