@@ -129,7 +129,7 @@ exports.getListProdutc = async function (req, res) {
         let listCategories = await categoriesModel.find()
         let listProductList = await productModel.find()
         let listProductCode = await producCodeModel.find()
-        res.json(listProductList, listProductCode, listCategories)
+        res.json({ listProductList, listProductCode, listCategories })
     } catch (error) {
         console.log(error);
     }
