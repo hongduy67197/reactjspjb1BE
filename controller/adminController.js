@@ -191,7 +191,17 @@ exports.deleteProductCode = async function (req, res) {
 
 exports.getListProduct = async function (req, res) {
     try {
-        let listProduct = await productModel.find().populate('idProductCode')
+        let listProduct = await productModel.find()
+        for (let i = 0; i < listProduct.length; i++) {
+            let idinProductCode = listProduct[i].idProductCode
+            console.log(12, idinProductCode);
+            if (idinProductCode) {
+                let inforProdcutCode = await producCodeModel.findOne(
+                    { _id: idinProductCode }
+                )
+                listProduct[i].idProductCode = inforProdcutCode
+            }
+        }
         res.json(listProduct)
     } catch (error) {
         console.log(error);
