@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken')
 const productModel = require('../models/productSchema')
 const producCodeModel = require('../models/productCodeSchema')
 const ordersModel = require('../models/orderSchema')
+const categoriesModel = require('../models/categoriesSchema')
 
 exports.register = async function (req, res) {
     try {
@@ -118,6 +119,17 @@ exports.getListCarts = async function (req, res) {
         let userId = req.query.userId
         let listCartsUser = await cartsModel.find({ idUser: userId }).populate('listProduct.idProduct')
         res.json(listCartsUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getListProdutc = async function (req, res) {
+    try {
+        let listCategories = await categoriesModel.find()
+        let listProductList = await productModel.find()
+        let listProductCode = await producCodeModel.find()
+        res.json({ listProductList, listProductCode, listCategories })
     } catch (error) {
         console.log(error);
     }
