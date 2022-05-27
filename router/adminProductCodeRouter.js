@@ -19,6 +19,6 @@ router.get('/list', adminController.getListProductCode)
 router.get('/product', adminController.searchProduct)
 router.post('/', upload.single('thumNail'), adminController.createProductCode)
 router.put('/:idProductCode', upload.single('thumNail'), adminController.editProductCode)
-router.delete('/:idProductCode', adminController.deleteProductCode)
+router.delete('/:idProductCode', adminController.deleteProductCodeCD)
 
 module.exports = router

@@ -5,11 +5,15 @@ const productCodeRouetr = require('./adminProductCodeRouter')
 const productRouyer = require('./adminProductRouter')
 const userRouter = require('./adminUserRouter')
 const orderRouter = require('./adminOrderRouter')
+const slideRouter = require('./adminSlideRouter')
+const iconRouter = require('./adminIconRouter')
 
 router.use('/categories', categoriesRouter);
 router.use('/productcode', productCodeRouetr)
 router.use('/product', productRouyer)
 router.use('/user', userRouter)
 router.use('/order', orderRouter)
+router.use('/slide', slideRouter)
+router.use('/icon', iconRouter)
 
 module.exports = router

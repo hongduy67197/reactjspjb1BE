@@ -23,7 +23,8 @@ const productSchema = mongoose.Schema(
             enum: ['true', 'fales'],
             required: true,
             trim: true,
-        }
+        },
+        icon: { type: String, ref: 'icon' }
     }, { collection: 'product' }
 )
 
