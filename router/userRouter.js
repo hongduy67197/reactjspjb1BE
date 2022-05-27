@@ -30,8 +30,13 @@ router.get("/carts", userController.getListCarts);
 router.put("/carts", userController.updateCarts);
 
 // productCode
+<<<<<<< HEAD
 router.get("/fillter", userController.getFillterProductCode);
 
+=======
+router.get('/fillter', userController.getFillterProductCode)
+router.get('/list', userController.getAdllProductCode)
+>>>>>>> f7d38a4344216d9445a2ff6367c1b8863b44d6d3
 // product
 router.get("/productlist", userController.getListProdutc);
 router.get("/product_details", userController.getInforListProductCode);
