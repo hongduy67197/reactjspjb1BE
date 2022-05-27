@@ -123,6 +123,16 @@ exports.getListCarts = async function (req, res) {
     }
 }
 
+exports.getListProdutc = async function (req, res) {
+    try {
+        let listProductList = await productModel.find()
+        let listProductCode = await producCodeModel.find()
+        res.json(listProductList, listProductCode)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.checkIdProduct = async function (req, res) {
     try {
         let productCodeSelect = await producCodeModel.find(
