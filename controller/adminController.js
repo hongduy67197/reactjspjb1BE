@@ -211,7 +211,7 @@ exports.getInforProduct = async function (req, res) {
     try {
         let productSelecter = await productModel.findOne(
             { _id: req.params.idProduct }
-        ).populate('idProductCode')
+        ).populate('idProductCode').populate('icon')
         res.json(productSelecter)
     } catch (error) {
         console.log(error);
@@ -238,6 +238,7 @@ exports.createProduct = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
+                    icon: req.body.icon,
                     createDate: new Date()
                 }
             )
@@ -258,6 +259,7 @@ exports.createProduct = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
+                    icon: req.body.icon,
                     createDate: new Date()
                 }
             )
@@ -290,6 +292,7 @@ exports.editProduct = async function (req, res) {
                     design: req.body.design,
                     panel: req.body.panel,
                     suggest: req.body.suggest,
+                    icon: req.body.icon,
                 }
             )
         } else {
@@ -311,6 +314,7 @@ exports.editProduct = async function (req, res) {
                     design: req.body.design,
                     panel: req.body.panel,
                     suggest: req.body.suggest,
+                    icon: req.body.icon,
                 }
             )
         }
