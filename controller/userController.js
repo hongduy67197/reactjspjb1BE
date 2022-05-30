@@ -164,6 +164,24 @@ exports.getFillterProductCode = async function (req, res) {
     }
 }
 
+exports.getAdllProductCode = async function (req, res) {
+    try {
+        let listProductCode = await producCodeModel.find()
+        let listProduct = await productModel.find()
+        let data = []
+        for (let i = 0; i < listProductCode.length; i++) {
+            let filterList = listProduct.filter(function (value) {
+                return (value.idProductCode == listProductCode[i]._id)
+            })
+            listProductCode[i]._doc.data = filterList
+            data.push(listProductCode[i])
+        }
+        res.json(data)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.getInforListProductCode = async function (req, res) {
     try {
         let getProductCode = await producCodeModel.findOne(

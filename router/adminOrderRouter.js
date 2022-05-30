@@ -2,8 +2,8 @@ const express = require('express')
 const router = express.Router()
 const adminController = require('../controller/adminController')
 
-router.use('/', adminController.getListOrderAd)
-router.use('/user/:idUer', adminController.getListOrderFromUser)
-router.use('/:idOrder', adminController.editOrder)
-router.use('/:idOrder', adminController.deleteOrder)
+router.get('/', adminController.getListOrderAd)
+router.get('/user/:idUer', adminController.getListOrderFromUser)
+router.put('/:idOrder', adminController.editOrder)
+router.delete('/:idOrder', adminController.deleteOrder)
 module.exports = router

@@ -27,7 +27,7 @@ async function sendEMail(id, email, codeCheck) {
 
     let info = await transporter.sendMail(
         {
-            from: 'btprojectB1',
+            from: 'btprojectbootcam1@gmail.com',
             to: email,
             subject: 'Hello ✔',
             text: 'Email registered successfully',

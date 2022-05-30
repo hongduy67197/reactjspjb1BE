@@ -30,7 +30,7 @@ router.put('/carts', userController.updateCarts)
 
 // productCode
 router.get('/fillter', userController.getFillterProductCode)
-
+router.get('/list', userController.getAdllProductCode)
 // product
 router.get('/productlist', userController.getListProdutc)
 router.get('/product_details', userController.getInforListProductCode)

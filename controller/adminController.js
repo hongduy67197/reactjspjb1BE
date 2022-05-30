@@ -5,8 +5,11 @@ const userModel = require('../models/userSchema')
 const orderModel = require('../models/orderSchema')
 const { comparePassword } = require('../services/auth')
 const multer = require('multer')
+const iconModel = require('../models/iconSchema')
+const cartsModel = require('../models/cartsSchema')
 const upload = multer({ dest: 'upload/' })
-
+const { deleteProduct, deleteProductCode, deleteProductCodeCate } = require('../services/productCode')
+const sliderModel = require('../models/sliderSchema')
 
 exports.getListCategories = async function (req, res) {
     try {
@@ -68,10 +71,17 @@ exports.editCategories = async function (req, res) {
 
 exports.deleteCategories = async function (req, res) {
     try {
+        let listProductCode = await producCodeModel.find(
+            { idCategories: req.params.idCategories }
+        ).select('_id')
+        let listCodeId = listProductCode.map((value => {
+            return value._id
+        }))
+        let listProduct = await productModel.deleteMany({ idProductCode: { $in: listCodeId } })
         let disCategories = await categoriesModel.deleteOne(
             { _id: req.params.idCategories }
         )
-        res.status(200).json(disCategories)
+        res.status(200).json(listProduct, disCategories)
     } catch (error) {
         res.json(error)
     }
@@ -178,12 +188,11 @@ exports.editProductCode = async function (req, res) {
     }
 }
 
-exports.deleteProductCode = async function (req, res) {
+exports.deleteProductCodeCD = async function (req, res) {
     try {
-        let deleteProductCode = await producCodeModel.deleteOne(
-            { _id: req.params.idProductCode }
-        )
-        res.json(deleteProductCode)
+        let dropProductfollowPoductCode = await deleteProduct(req.params.idProductCode)
+        let deleteProductCD = await deleteProductCode(req.params.idProductCode)
+        res.json(deleteProductCD, dropProductfollowPoductCode)
     } catch (error) {
         console.log(error);
     }
@@ -191,17 +200,7 @@ exports.deleteProductCode = async function (req, res) {
 
 exports.getListProduct = async function (req, res) {
     try {
-        let listProduct = await productModel.find()
-        for (let i = 0; i < listProduct.length; i++) {
-            let idinProductCode = listProduct[i].idProductCode
-            console.log(12, idinProductCode);
-            if (idinProductCode) {
-                let inforProdcutCode = await producCodeModel.findOne(
-                    { _id: idinProductCode }
-                )
-                listProduct[i].idProductCode = inforProdcutCode
-            }
-        }
+        let listProduct = await productModel.find().populate('idProductCode').populate('icon')
         res.json(listProduct)
     } catch (error) {
         console.log(error);
@@ -212,7 +211,7 @@ exports.getInforProduct = async function (req, res) {
     try {
         let productSelecter = await productModel.findOne(
             { _id: req.params.idProduct }
-        ).populate('idProductCode')
+        ).populate('idProductCode').populate('icon')
         res.json(productSelecter)
     } catch (error) {
         console.log(error);
@@ -239,6 +238,7 @@ exports.createProduct = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
+                    icon: req.body.icon,
                     createDate: new Date()
                 }
             )
@@ -259,13 +259,14 @@ exports.createProduct = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
+                    icon: req.body.icon,
                     createDate: new Date()
                 }
             )
         }
         res.json(newProduct)
     } catch (error) {
-        console.log(123213,error);
+        console.log(123213, error);
     }
 }
 
@@ -291,6 +292,7 @@ exports.editProduct = async function (req, res) {
                     design: req.body.design,
                     panel: req.body.panel,
                     suggest: req.body.suggest,
+                    icon: req.body.icon,
                 }
             )
         } else {
@@ -312,6 +314,7 @@ exports.editProduct = async function (req, res) {
                     design: req.body.design,
                     panel: req.body.panel,
                     suggest: req.body.suggest,
+                    icon: req.body.icon,
                 }
             )
         }
@@ -376,10 +379,13 @@ exports.updateUserInfor = async function (req, res) {
 
 exports.deleteUser = async function (req, res) {
     try {
+        let dropCartsUser = await cartsModel.deleteOne(
+            { _id: req.params.idUser }
+        )
         let dropUser = await userModel.deleteOne(
             { _id: req.params.idUser }
         )
-        res.json(dropUser)
+        res.json(dropUser, dropCartsUser)
     } catch (error) {
         console.log(error);
     }
@@ -443,6 +449,168 @@ exports.testCreateUser = async function (req, res) {
             }
         )
         res.json(abc)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getListIcon = async function (req, res) {
+    try {
+        let listIcon = await iconModel.find()
+        res.json(listIcon)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.searchIcon = async function (req, res) {
+    try {
+        let searchIconProduct = await iconModel.find(
+            { iconName: { $regex: `.*${req.query.search}*` } }
+        )
+        res.json(searchIconProduct)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getNewIcon = async function (req, res) {
+    try {
+        let newIcon
+        if (req.file) {
+            newIcon = await iconModel.create(
+                {
+                    iconName: req.body.iconName,
+                    iconPic: '/' + req.file.path,
+                }
+            )
+        } else {
+            newIcon = await iconModel.create(
+                {
+                    iconName: req.body.iconName,
+                    iconPic: req.body.iconPic,
+                }
+            )
+        }
+        res.json(newIcon)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.editIcon = async function (req, res) {
+    try {
+        let editProduct
+        if (req.file) {
+            editProduct = await iconModel.updateOne(
+                { _id: req.params.idIcon },
+                {
+                    iconName: req.body.iconName,
+                    iconPic: '/' + req.file.path,
+                }
+            )
+        } else {
+            editProduct = await iconModel.updateOne(
+                { _id: req.params.idIcon },
+                {
+                    iconName: req.body.iconName,
+                    iconPic: req.body.iconPic,
+                }
+            )
+        }
+        res.json(editProduct)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.deleteIcon = async function (req, res) {
+    try {
+        let dropIcon = await iconModel.deleteOne(
+            { _id: req.params.idIcon }
+        )
+        res.json(dropIcon)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getListSlide = async function (req, res) {
+    try {
+        let listSlide = await sliderModel.find()
+        res.json(listSlide)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.searchSlide = async function (req, res) {
+    try {
+        let searchSlide = await sliderModel.find(
+            { slideName: { $regex: `.*${req.query.search}*` } }
+        )
+        res.json(searchSlide)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getNewSlide = async function (req, res) {
+    try {
+        let newSlide
+        if (req.file) {
+            newSlide = await sliderModel.create(
+                {
+                    slideName: req.body.slideName,
+                    slideImg: '/' + req.file.path,
+                }
+            )
+        } else {
+            newSlide = await sliderModel.create(
+                {
+                    slideName: req.body.slideName,
+                    slideImg: req.body.slideImg,
+                }
+            )
+        }
+        res.json(newSlide)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.editSlide = async function (req, res) {
+    try {
+        let editSlide
+        if (req.file) {
+            editSlide = await sliderModel.updateOne(
+                { _id: req.params.idSlide },
+                {
+                    slideName: req.body.slideName,
+                    slideImg: '/' + req.file.path,
+                }
+            )
+        } else {
+            editSlide = await sliderModel.updateOne(
+                { _id: req.params.idSlide },
+                {
+                    slideName: req.body.slideName,
+                    slideImg: req.body.slideImg,
+                }
+            )
+        }
+        res.json(editSlide)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.deleteSlide = async function (req, res) {
+    try {
+        let dropSlide = await sliderModel.deleteOne(
+            { _id: req.params.idSlide }
+        )
+        res.json(dropSlide)
     } catch (error) {
         console.log(error);
     }
