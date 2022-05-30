@@ -17,10 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 router.get("/", adminController.getListCategories);
 router.post("/", upload.single("thumpNail"), adminController.createCategories);
-router.put(
-  "/:idCategories",
-  upload.single("thumpNail"),
-  adminController.editCategories
+router.put("/:idCategories", upload.single("thumpNail"), adminController.editCategories
 );
 router.delete("/:idCategories", adminController.deleteCategories);
 
