@@ -448,7 +448,12 @@ exports.testCreateUser = async function (req, res) {
                 password: req.body.password
             }
         )
-        res.json(abc)
+        let abcCreateCarts = await cartsModel.create(
+            {
+                idUser: abc._id,
+            }
+        )
+        res.json(abcCreateCarts)
     } catch (error) {
         console.log(error);
     }
