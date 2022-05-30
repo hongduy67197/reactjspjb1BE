@@ -22,7 +22,7 @@ exports.getListCategories = async function (req, res) {
 
 exports.getInforCategories = async function (req, res) {
     try {
-        let selectCategories = await cartsModel.findOne(
+        let selectCategories = await categoriesModel.findOne(
             { _id: req.params.idCategories }
         )
         res.json(selectCategories)
