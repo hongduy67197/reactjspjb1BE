@@ -664,3 +664,52 @@ exports.deleteSlide = async function (req, res) {
         console.log(error);
     }
 }
+
+exports.testCreateOrder = async function (req, res) {
+    try {
+        let newOrderFake = await orderModel.create(
+            {
+                idUser: req.body.idUser,
+                address: req.body.address,
+                total: req.body.total,
+                phone: req.body.phone,
+                listProduct: req.body.listProduct
+            }
+        )
+        res.json(newOrderFake)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+exports.testEditOrder = async function (req, res) {
+    try {
+        let editOrder = await orderModel.updateOne(
+            {
+                _id: req.params.idOrder
+            },
+            {
+                address: req.body.address,
+                total: req.body.total,
+                phone: req.body.phone,
+                status: req.body.status,
+                listProduct: req.body.listProduct
+            }
+        )
+        res.json(editOrder)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.testDeleteOrder = async function (req, res) {
+    try {
+        let testdropOrder = await orderModel.deleteOne(
+            { _id: req.params.idOrder }
+        )
+        res.json(testdropOrder)
+    } catch (error) {
+        console.log(error);
+    }
+}

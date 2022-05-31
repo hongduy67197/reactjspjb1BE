@@ -118,7 +118,7 @@ exports.editUserInfor = async function (req, res) {
 
 exports.getListCarts = async function (req, res) {
     try {
-        let userId = req.query.userId
+        let userId = req.user._id
         let listCartsUser = await cartsModel.find({ idUser: userId }).populate('listProduct.idProduct')
         res.json(listCartsUser)
     } catch (error) {
@@ -253,8 +253,9 @@ exports.updateCarts = async function (req, res) {
     try {
         let idProduct = req.body.idProduct
         let quantity = req.body.quantity
+        let userId = req.user._id
         let searchProduct = await cartsModel.findOne({
-            _id: req.query.cartsId
+            idUser: userId
         })
 
         let oldquantity;
@@ -266,14 +267,14 @@ exports.updateCarts = async function (req, res) {
         if (oldquantity) {
             let newQuantity = quantity
             let updateCartsQuantity = await cartsModel.updateOne(
-                { _id: req.query.cartsId, "listProducts.idproduct": idProduct },
+                { idUser: userId, "listProducts.idproduct": idProduct },
                 { $set: { "listProducts.$.quantity": newQuantity } }
 
             )
             res.json(updateCartsQuantity)
         } else {
             let fixCarts = await cartsModel.updateOne(
-                { _id: req.query.cartsId },
+                { idUser: userId },
                 {
                     cartsPrice: req.body.cartsPrice,
                     $push: {
