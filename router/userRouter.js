@@ -43,12 +43,8 @@ router.get("/order/:idOrder", userController.getInforOrderSelect);
 router.post("/order", userController.createOrderUser);
 router.delete("/order/:idOrder", userController.deleteOrderUser);
 
-<<<<<<< HEAD
-module.exports = router;
-=======
 // comment
-router.post('/comment', checkToken, userController.createCommentProduct)
-router.put('/:idComment', checkToken, userController.editCommentProduct)
-router.delete('/:idComment', checkToken, userController.deleteCommentProduct)
-module.exports = router
->>>>>>> 5115927cb5680e1508f796c51643fc4be708604d
+router.post("/comment", checkToken, userController.createCommentProduct);
+router.put("/:idComment", checkToken, userController.editCommentProduct);
+router.delete("/:idComment", checkToken, userController.deleteCommentProduct);
+module.exports = router;
