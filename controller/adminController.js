@@ -20,6 +20,17 @@ exports.getListCategories = async function (req, res) {
     }
 }
 
+exports.getInforCategories = async function (req, res) {
+    try {
+        let selectCategories = await categoriesModel.findOne(
+            { _id: req.params.idCategories }
+        )
+        res.json(selectCategories)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.createCategories = async function (req, res) {
     try {
         let newCategories
@@ -95,6 +106,17 @@ exports.searchProduct = async function (req, res) {
         res.json(searchProductList)
     } catch (error) {
         res.json(error)
+    }
+}
+
+exports.getInforProductCode = async function (req, res) {
+    try {
+        let selectProductCode = await producCodeModel.findOne(
+            { _id: req.params.idProductCode }
+        ).populate('idCategories')
+        res.json(selectProductCode)
+    } catch (error) {
+        console.log(error);
     }
 }
 
