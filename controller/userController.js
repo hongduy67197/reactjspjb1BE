@@ -11,6 +11,8 @@ const productModel = require('../models/productSchema')
 const producCodeModel = require('../models/productCodeSchema')
 const ordersModel = require('../models/orderSchema')
 const categoriesModel = require('../models/categoriesSchema')
+const sliderModel = require('../models/sliderSchema')
+const commentModel = require('../models/commentSchema')
 
 exports.register = async function (req, res) {
     try {
@@ -157,8 +159,47 @@ exports.getFillterProductCode = async function (req, res) {
     try {
         let listProductCode = await producCodeModel.find(
             { idCategories: req.query.idCategories }
-        )
-        res.json(listProductCode)
+        ).sort('createDate')
+        let listCodeId = listProductCode.map((value => {
+            return value._id
+        }))
+        let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } })
+        let listRam = []
+        let listPriceRange = []
+        let listStorage = []
+        let listRom = []
+        let listColor = []
+        for (let j = 0; j < listProductCode.length; j++) {
+            let fillterList = listProduct.filter(function (value) {
+                return (value.idProductCode == listProductCode[j]._id)
+            })
+            listProductCode[j]._doc.products = fillterList
+        }
+        for (let i = 0; i < listProduct.length; i++) {
+            if (!listColor.includes(listProduct[i].color)) {
+                listColor.push(listProduct[i].color)
+            }
+            if (!listRam.includes(listProduct[i].ram)) {
+                listRam.push(listProduct[i].ram)
+            }
+            if (listPriceRange.indexOf(listProduct[i].priceRange) == -1) {
+                listPriceRange.push(listProduct[i].priceRange)
+            }
+            if (listStorage.indexOf(listProduct[i].storage) == -1) {
+                listStorage.push(listProduct[i].storage)
+            }
+            if (listRom.indexOf(listProduct[i].rom) == -1) {
+                listRom.push(listProduct[i].rom)
+            }
+        }
+        let listData = {
+            listRam: listRam,
+            listPriceRange: listPriceRange,
+            listStorage: listStorage,
+            listRom: listRom,
+            listColor: listColor,
+        }
+        res.json({ listProductCode, listData, listProduct })
     } catch (error) {
         console.log(error);
     }
@@ -166,6 +207,8 @@ exports.getFillterProductCode = async function (req, res) {
 
 exports.getAdllProductCode = async function (req, res) {
     try {
+        let listSlide = await sliderModel.find()
+        let listCategories = await categoriesModel.find()
         let listProductCode = await producCodeModel.find()
         let listProduct = await productModel.find()
         let data = []
@@ -176,7 +219,12 @@ exports.getAdllProductCode = async function (req, res) {
             listProductCode[i]._doc.data = filterList
             data.push(listProductCode[i])
         }
-        res.json(data)
+        let dataHome = {
+            listCategories: listCategories,
+            dataProductCode: data,
+            listSlide: listSlide
+        }
+        res.json(dataHome)
     } catch (error) {
         console.log(error);
     }
@@ -186,12 +234,17 @@ exports.getInforListProductCode = async function (req, res) {
     try {
         let getProductCode = await producCodeModel.findOne(
             { productName: req.query.productName }
-        )
+        ).populate('idCategories')
         let idProductCodeSelect = getProductCode._id
         let listProductFollow = await productModel.find(
             { idProductCode: idProductCodeSelect }
-        )
-        res.json({ listProduct: listProductFollow, productCode: getProductCode })
+        ).populate('icon')
+        let listComment = await commentModel.find(
+            { idProductCode: idProductCodeSelect }
+        ).populate('idUser')
+        getProductCode._doc.dataProduct = listProductFollow
+        getProductCode._doc.dataComment = listComment
+        res.json({ getProductCode })
     } catch (error) {
         console.log(error);
     }
@@ -299,6 +352,52 @@ exports.deleteOrderUser = async function (req, res) {
             { _id: req.params.idOrder }
         )
         res.json(dropOrderUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.createCommentProduct = async function (req, res) {
+    try {
+        let productSelecter = await producCodeModel.findOne(
+            { productName: req.query.productName }
+        )
+        let idProductCodeSelect = productSelecter._id
+        let newCommentProduct = await commentModel.create(
+            {
+                idUser: req.user._id,
+                idProductCode: idProductCodeSelect,
+                commentContent: req.body.commentContent,
+            }
+        )
+        res.json(newCommentProduct)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.editCommentProduct = async function (req, res) {
+    try {
+        let editCommentPro = await commentModel.updateOne(
+            {
+                _id: req.params.idComment,
+            },
+            {
+                commentContent: req.body.commentContent,
+            }
+        )
+        res.json(editCommentPro)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.deleteCommentProduct = async function (req, res) {
+    try {
+        let dropComment = await commentModel.deleteOne(
+            { _id: req.params.idComment }
+        )
+        res.json(dropComment)
     } catch (error) {
         console.log(error);
     }
