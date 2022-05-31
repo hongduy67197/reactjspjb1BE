@@ -7,4 +7,7 @@ router.get('/:idOrder', adminController.getInforOrderSelect)
 router.get('/user/:idUer', adminController.getListOrderFromUser)
 router.put('/:idOrder', adminController.editOrder)
 router.delete('/:idOrder', adminController.deleteOrder)
+router.post('/test', adminController.testCreateOrder)
+router.put('/test/:idOrder', adminController.testEditOrder)
+router.delete('/test/:idOrder', adminController.testDeleteOrder)
 module.exports = router
