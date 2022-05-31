@@ -164,46 +164,43 @@ exports.getFillterProductCode = async function (req, res) {
             return value._id
         }))
         let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } })
-        let listProductType = []
         let listRam = []
         let listPriceRange = []
         let listStorage = []
         let listRom = []
-        let listCameraProduct = []
-        let listSpecialFeatures = []
+        let listColor = []
+        for (let j = 0; j < listProductCode.length; j++) {
+            let fillterList = listProduct.filter(function (value) {
+                return (value.idProductCode == listProductCode[j]._id)
+            })
+            listProductCode[j]._doc.products = fillterList
+        }
+        console.log(179, listProductCode);
         for (let i = 0; i < listProduct.length; i++) {
-            if (!listProductType.includes(listProduct[i])) {
-                listProductType.push(listProduct[i])
+            if (!listColor.includes(listProduct[i].color)) {
+                listColor.push(listProduct[i].color)
             }
-            if (!listRam.includes(listProduct[i])) {
-                listRam.push(listProduct[i])
+            if (!listRam.includes(listProduct[i].ram)) {
+                listRam.push(listProduct[i].ram)
             }
-            if (listPriceRange.indexOf(listProduct[i]) == -1) {
-                listPriceRange.push(listProduct[i])
+            if (listPriceRange.indexOf(listProduct[i].priceRange) == -1) {
+                listPriceRange.push(listProduct[i].priceRange)
             }
-            if (listStorage.indexOf(listProduct[i]) == -1) {
-                listStorage.push(listProduct[i])
+            if (listStorage.indexOf(listProduct[i].storage) == -1) {
+                listStorage.push(listProduct[i].storage)
             }
-            if (listRom.indexOf(listProduct[i]) == -1) {
-                listRom.push(listProduct[i])
-            }
-            if (listCameraProduct.indexOf(listProduct[i]) == -1) {
-                listCameraProduct.push(listProduct[i])
-            }
-            if (listSpecialFeatures.indexOf(listProduct[i]) == -1) {
-                listSpecialFeatures.push(listProduct[i])
+            if (listRom.indexOf(listProduct[i].rom) == -1) {
+                listRom.push(listProduct[i].rom)
             }
         }
         let listData = {
-            listProductType: listProductType,
             listRam: listRam,
             listPriceRange: listPriceRange,
             listStorage: listStorage,
             listRom: listRom,
-            listCameraProduct: listCameraProduct,
-            listSpecialFeatures: listSpecialFeatures,
+            listColor: listColor,
         }
-        res.json(listProductCode, listData)
+        res.json({ listProductCode, listData, listProduct })
     } catch (error) {
         console.log(error);
     }
