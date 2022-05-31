@@ -175,7 +175,6 @@ exports.getFillterProductCode = async function (req, res) {
             })
             listProductCode[j]._doc.products = fillterList
         }
-        console.log(179, listProductCode);
         for (let i = 0; i < listProduct.length; i++) {
             if (!listColor.includes(listProduct[i].color)) {
                 listColor.push(listProduct[i].color)
