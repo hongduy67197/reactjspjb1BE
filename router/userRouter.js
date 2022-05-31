@@ -26,8 +26,8 @@ router.post("/login", userController.login);
 router.put("/:idUser", upload.single("avatar"), userController.editUserInfor);
 
 // carts
-router.get("/carts", userController.getListCarts);
-router.put("/carts", userController.updateCarts);
+router.get("/carts", checkToken, userController.getListCarts);
+router.put("/carts", checkToken, userController.updateCarts);
 
 // productCode
 router.get("/fillter", userController.getFillterProductCode);

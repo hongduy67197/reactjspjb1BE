@@ -115,16 +115,14 @@ exports.editUserInfor = async function (req, res) {
 };
 
 exports.getListCarts = async function (req, res) {
-  try {
-    let userId = req.query.userId;
-    let listCartsUser = await cartsModel
-      .find({ idUser: userId })
-      .populate("listProduct.idProduct");
-    res.json(listCartsUser);
-  } catch (error) {
-    console.log(error);
-  }
-};
+    try {
+        let userId = req.user._id
+        let listCartsUser = await cartsModel.find({ idUser: userId }).populate('listProduct.idProduct')
+        res.json(listCartsUser)
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 exports.getListProdutc = async function (req, res) {
   try {
@@ -156,45 +154,52 @@ exports.checkIdProduct = async function (req, res) {
 };
 
 exports.getFillterProductCode = async function (req, res) {
-  try {
-    let listProductCode = await producCodeModel
-      .find({ idCategories: req.query.idCategories })
-      .sort("createDate");
-    let listCodeId = listProductCode.map((value) => {
-      return value._id;
-    });
-    let listProduct = await productModel.find({
-      idProductCode: { $in: listCodeId },
-    });
-    let listProductType = [];
-    let listRam = [];
-    let listPriceRange = [];
-    let listStorage = [];
-    let listRom = [];
-    let listCameraProduct = [];
-    let listSpecialFeatures = [];
-    for (let i = 0; i < listProduct.length; i++) {
-      if (!listProductType.includes(listProduct[i])) {
-        listProductType.push(listProduct[i]);
-      }
-      if (!listRam.includes(listProduct[i])) {
-        listRam.push(listProduct[i]);
-      }
-      if (listPriceRange.indexOf(listProduct[i]) == -1) {
-        listPriceRange.push(listProduct[i]);
-      }
-      if (listStorage.indexOf(listProduct[i]) == -1) {
-        listStorage.push(listProduct[i]);
-      }
-      if (listRom.indexOf(listProduct[i]) == -1) {
-        listRom.push(listProduct[i]);
-      }
-      if (listCameraProduct.indexOf(listProduct[i]) == -1) {
-        listCameraProduct.push(listProduct[i]);
-      }
-      if (listSpecialFeatures.indexOf(listProduct[i]) == -1) {
-        listSpecialFeatures.push(listProduct[i]);
-      }
+    try {
+        let listProductCode = await producCodeModel.find(
+            { idCategories: req.query.idCategories }
+        ).sort('createDate')
+        let listCodeId = listProductCode.map((value => {
+            return value._id
+        }))
+        let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } })
+        let listRam = []
+        let listPriceRange = []
+        let listStorage = []
+        let listRom = []
+        let listColor = []
+        for (let j = 0; j < listProductCode.length; j++) {
+            let fillterList = listProduct.filter(function (value) {
+                return (value.idProductCode == listProductCode[j]._id)
+            })
+            listProductCode[j]._doc.products = fillterList
+        }
+        for (let i = 0; i < listProduct.length; i++) {
+            if (!listColor.includes(listProduct[i].color)) {
+                listColor.push(listProduct[i].color)
+            }
+            if (!listRam.includes(listProduct[i].ram)) {
+                listRam.push(listProduct[i].ram)
+            }
+            if (listPriceRange.indexOf(listProduct[i].priceRange) == -1) {
+                listPriceRange.push(listProduct[i].priceRange)
+            }
+            if (listStorage.indexOf(listProduct[i].storage) == -1) {
+                listStorage.push(listProduct[i].storage)
+            }
+            if (listRom.indexOf(listProduct[i].rom) == -1) {
+                listRom.push(listProduct[i].rom)
+            }
+        }
+        let listData = {
+            listRam: listRam,
+            listPriceRange: listPriceRange,
+            listStorage: listStorage,
+            listRom: listRom,
+            listColor: listColor,
+        }
+        res.json({ listProductCode, listData, listProduct })
+    } catch (error) {
+        console.log(error);
     }
     let listData = {
       listProductType: listProductType,
@@ -256,18 +261,45 @@ exports.getInforListProductCode = async function (req, res) {
   }
 };
 exports.updateCarts = async function (req, res) {
-  try {
-    let idProduct = req.body.idProduct;
-    let quantity = req.body.quantity;
-    let searchProduct = await cartsModel.findOne({
-      _id: req.query.cartsId,
-    });
+    try {
+        let idProduct = req.body.idProduct
+        let quantity = req.body.quantity
+        let userId = req.user._id
+        let searchProduct = await cartsModel.findOne({
+            idUser: userId
+        })
 
-    let oldquantity;
-    for (let i = 0; i < searchProduct.listProduct.length; i++) {
-      if (idProduct === searchProduct.listProduct[i].idProduct) {
-        oldquantity = searchProduct.listProduct[i].quantity;
-      }
+        let oldquantity;
+        for (let i = 0; i < searchProduct.listProduct.length; i++) {
+            if (idProduct === searchProduct.listProduct[i].idProduct) {
+                oldquantity = searchProduct.listProduct[i].quantity
+            }
+        }
+        if (oldquantity) {
+            let newQuantity = quantity
+            let updateCartsQuantity = await cartsModel.updateOne(
+                { idUser: userId, "listProducts.idproduct": idProduct },
+                { $set: { "listProducts.$.quantity": newQuantity } }
+
+            )
+            res.json(updateCartsQuantity)
+        } else {
+            let fixCarts = await cartsModel.updateOne(
+                { idUser: userId },
+                {
+                    cartsPrice: req.body.cartsPrice,
+                    $push: {
+                        listProduct: {
+                            idProduct: idProduct,
+                            quantity: quantity,
+                        }
+                    }
+                }
+            )
+            res.json(fixCarts)
+        }
+    } catch (error) {
+        console.log(error);
     }
     if (oldquantity) {
       let newQuantity = quantity;
