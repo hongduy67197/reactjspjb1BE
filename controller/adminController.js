@@ -366,6 +366,17 @@ exports.getListUser = async function (req, res) {
     }
 }
 
+exports.getInforUserSelect = async function (req, res) {
+    try {
+        let userSelecter = await userModel.findOne(
+            { _id: req.params.idUser }
+        )
+        res.json(userSelecter)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.updateUserInfor = async function (req, res) {
     try {
         let updateUser
@@ -402,7 +413,7 @@ exports.updateUserInfor = async function (req, res) {
 exports.deleteUser = async function (req, res) {
     try {
         let dropCartsUser = await cartsModel.deleteOne(
-            { _id: req.params.idUser }
+            { idUser: req.params.idUser }
         )
         let dropUser = await userModel.deleteOne(
             { _id: req.params.idUser }
@@ -417,6 +428,17 @@ exports.getListOrderAd = async function (req, res) {
     try {
         let listOrderAd = await orderModel.find()
         res.json(listOrderAd)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+exports.getInforOrderSelect = async function (req, res) {
+    try {
+        let orderSelect = await orderModel.findOne(
+            { _id: req.params.idOrder }
+        ).populate('listProduct.idProduct')
+        res.json(orderSelect)
     } catch (error) {
         console.log(error);
     }

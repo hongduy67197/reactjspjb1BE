@@ -42,4 +42,8 @@ router.get('/order/:idOrder', userController.getInforOrderSelect)
 router.post('/order', userController.createOrderUser)
 router.delete('/order/:idOrder', userController.deleteOrderUser)
 
+// comment
+router.post('/comment', checkToken, userController.createCommentProduct)
+router.put('/:idComment', checkToken, userController.editCommentProduct)
+router.delete('/:idComment', checkToken, userController.deleteCommentProduct)
 module.exports = router
