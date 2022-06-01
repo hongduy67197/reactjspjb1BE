@@ -230,6 +230,17 @@ exports.getAdllProductCode = async function (req, res) {
     }
 }
 
+exports.getListSearchInput = async function (req, res) {
+    try {
+        let listSearchProductCode = await producCodeModel.find(
+            { productName: { $regex: `.*${req.query.search}*`, $options: 'i' } }
+        )
+        res.json(listSearchProductCode)
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 exports.getInforListProductCode = async function (req, res) {
     try {
         let getProductCode = await producCodeModel.findOne(

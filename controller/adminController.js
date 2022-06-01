@@ -101,7 +101,7 @@ exports.deleteCategories = async function (req, res) {
 exports.searchProduct = async function (req, res) {
     try {
         let searchProductList = await producCodeModel.find(
-            { productName: { $regex: `.*${req.query.search}*` } }
+            { productName: { $regex: req.query.search, $options: 'i' } }
         ).populate('idCategories')
         res.json(searchProductList)
     } catch (error) {
@@ -515,7 +515,7 @@ exports.getListIcon = async function (req, res) {
 exports.searchIcon = async function (req, res) {
     try {
         let searchIconProduct = await iconModel.find(
-            { iconName: { $regex: `.*${req.query.search}*` } }
+            { iconName: { $regex: req.query.search, $options: 'i' } }
         )
         res.json(searchIconProduct)
     } catch (error) {
@@ -596,7 +596,7 @@ exports.getListSlide = async function (req, res) {
 exports.searchSlide = async function (req, res) {
     try {
         let searchSlide = await sliderModel.find(
-            { slideName: { $regex: `.*${req.query.search}*` } }
+            { slideName: { $regex: req.query.search, $options: 'i' } }
         )
         res.json(searchSlide)
     } catch (error) {
