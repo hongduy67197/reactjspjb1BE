@@ -31,7 +31,7 @@ router.put('/carts', checkToken, userController.updateCarts)
 // productCode
 router.get('/fillter', userController.getFillterProductCode)
 router.get('/list', userController.getAdllProductCode)
-router.get('/search', userController.getListSearch)
+router.get('/search', userController.getListSearchInput)
 // product
 router.get('/productlist', userController.getListProdutc)
 router.get('/product_details', userController.getInforListProductCode)
