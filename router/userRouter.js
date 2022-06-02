@@ -23,6 +23,7 @@ router.get('/:email/:code', userController.verifyEmail)
 router.get('/', checkToken, userController.getUserInfor)
 router.post('/register', userController.register)
 router.post('/login', userController.login)
+router.post('/logout', checkToken, userController.logOut)
 router.put('/:idUser', checkToken, upload.single('avatar'), userController.editUserInfor)
 
 // carts

@@ -13,6 +13,7 @@ const ordersModel = require('../models/orderSchema')
 const categoriesModel = require('../models/categoriesSchema')
 const sliderModel = require('../models/sliderSchema')
 const commentModel = require('../models/commentSchema')
+const iconModel = require('../models/iconSchema')
 
 exports.register = async function (req, res) {
     try {
@@ -69,10 +70,24 @@ exports.login = async (req, res) => {
             let token = jwt.sign({ id: user._id }, 'projectFEB1', { expiresIn: 10 })
             await userModel.updateOne({ _id: user._id }, { token })
             res.cookie('user', token, { expires: new Date(Date.now() + 900000) })
-            res.json({ data: { token: token, role: user.role }, mess: 'oke' })
+            res.json({ data: { token: token, role: user.role, userData: user }, mess: 'oke' })
         }
     } catch (error) {
         res.json(error)
+    }
+}
+
+exports.logOut = async function (req, res) {
+    try {
+        let user = await userModel.updateOne(
+            { _id: req.user._id },
+            {
+                token: ''
+            }
+        )
+        res.status(200).json({ message: 'logout success' })
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -173,7 +188,8 @@ exports.getFillterProductCode = async function (req, res) {
         let listCodeId = listProductCode.map((value => {
             return value._id
         }))
-        let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } })
+        let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } }).populate('product')
+        let listIcon = await iconModel.find()
         let listRam = []
         let listPriceRange = []
         let listStorage = []
@@ -184,6 +200,12 @@ exports.getFillterProductCode = async function (req, res) {
                 return (value.idProductCode == listProductCode[j]._id)
             })
             listProductCode[j]._doc.products = fillterList
+            for (let k = 0; k < listProduct.length; k++) {
+                let filterIcon = listIcon.filter(function (data) {
+                    return (data._id == listProduct[k].icon)
+                })
+            }
+            listProductCode[j]._doc.listIcon = filterIcon
         }
         for (let i = 0; i < listProduct.length; i++) {
             if (!listColor.includes(listProduct[i].color)) {
