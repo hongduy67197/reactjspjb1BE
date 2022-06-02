@@ -529,11 +529,13 @@ exports.getNewIcon = async function (req, res) {
             newIcon = await iconModel.create({
                 iconName: req.body.iconName,
                 iconPic: "/" + req.file.path,
+                discount: req.body.discount,
             });
         } else {
             newIcon = await iconModel.create({
                 iconName: req.body.iconName,
                 iconPic: req.body.iconPic,
+                discount: req.body.discount,
             });
         }
         res.json(newIcon);
@@ -551,6 +553,7 @@ exports.editIcon = async function (req, res) {
                 {
                     iconName: req.body.iconName,
                     iconPic: "/" + req.file.path,
+                    discount: req.body.discount,
                 }
             );
         } else {
@@ -559,6 +562,7 @@ exports.editIcon = async function (req, res) {
                 {
                     iconName: req.body.iconName,
                     iconPic: req.body.iconPic,
+                    discount: req.body.discount,
                 }
             );
         }

@@ -4,6 +4,7 @@ const userController = require('../controller/userController')
 const multer = require('multer')
 const path = require('path');
 const { checkToken } = require('../midderware/auth');
+const userCommentRouter = require('./userCommentRouter')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './views/assets/img/avatar')
@@ -22,7 +23,7 @@ router.get('/:email/:code', userController.verifyEmail)
 router.get('/', checkToken, userController.getUserInfor)
 router.post('/register', userController.register)
 router.post('/login', userController.login)
-router.put('/:idUser', upload.single('avatar'), userController.editUserInfor)
+router.put('/:idUser', checkToken, upload.single('avatar'), userController.editUserInfor)
 
 // carts
 router.get('/carts', checkToken, userController.getListCarts)
@@ -44,7 +45,5 @@ router.post('/order', userController.createOrderUser)
 router.delete('/order/:idOrder', userController.deleteOrderUser)
 
 // comment
-router.post('/comment', checkToken, userController.createCommentProduct)
-router.put('/:idComment', checkToken, userController.editCommentProduct)
-router.delete('/:idComment', checkToken, userController.deleteCommentProduct)
+router.use('/comment', userCommentRouter)
 module.exports = router

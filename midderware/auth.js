@@ -23,28 +23,35 @@ async function checkRoleUser(req, res, next) {
 }
 
 async function checkToken(req, res, next) {
+    let searchTokenUser
     try {
         let token = req.headers.authorization
-        if (token) {
-            let searchTokenUser = await userModel.findOne(
-                { token: token }
-            )
-            if (searchTokenUser) {
-                let id = jwt.verify(token, 'projectFEB1')
-                if (id) {
-                    delete searchTokenUser._doc.token
-                    delete searchTokenUser._doc.password
-                    req.user = searchTokenUser
-                    next()
-                }
-            } else {
-                res.json('cant not find user')
+
+        searchTokenUser = await userModel.findOne(
+            { token: token }
+        )
+        if (searchTokenUser) {
+            let id = jwt.verify(token, 'projectFEB1')
+            console.log(id);
+            if (id) {
+                delete searchTokenUser._doc.token
+                delete searchTokenUser._doc.password
+                req.user = searchTokenUser
+                next()
             }
         } else {
-            res.json('cant not find token')
+            res.json('cant not find user')
+
         }
     } catch (error) {
-        console.log(error);
+        if (error.message == 'jwt expired') {
+            const token = jwt.sign({ id: searchTokenUser._id }, 'projectFEB1', { expiresIn: 10 })
+            await userModel.updateOne({ _id: searchTokenUser._id }, { token })
+            res.json('user', token, { expires: new Date(Date.now() + 900000) })
+            next()
+        } else {
+            res.json(error)
+        }
     }
 }
 

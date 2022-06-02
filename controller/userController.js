@@ -66,7 +66,7 @@ exports.login = async (req, res) => {
         } else if (!matchPassword) {
             return res.json({ status: 'undifind password' })
         } else {
-            let token = jwt.sign({ id: user._id }, 'projectFEB1')
+            let token = jwt.sign({ id: user._id }, 'projectFEB1', { expiresIn: 10 })
             await userModel.updateOne({ _id: user._id }, { token })
             res.cookie('user', token, { expires: new Date(Date.now() + 900000) })
             res.json({ data: { token: token, role: user.role }, mess: 'oke' })
@@ -91,22 +91,24 @@ exports.editUserInfor = async function (req, res) {
         if (req.file) {
             let link = req.file.path
             userEdit = await userModel.updateOne(
-                { _id: req.params.idUser },
+                { _id: req.user._id },
                 {
                     username: req.body.username,
                     address: req.body.address,
                     phone: req.body.phone,
                     avatar: '/' + link,
+                    birthDay: req.body.birthDay,
                 }
             )
         } else {
             userEdit = await userModel.updateOne(
-                { _id: req.params.idUser },
+                { _id: req.user._id },
                 {
                     username: req.body.username,
                     address: req.body.address,
                     phone: req.body.phone,
                     avatar: req.body.avatar,
+                    birthDay: req.body.birthDay,
                 }
             )
         }
@@ -157,9 +159,17 @@ exports.checkIdProduct = async function (req, res) {
 
 exports.getFillterProductCode = async function (req, res) {
     try {
-        let listProductCode = await producCodeModel.find(
-            { idCategories: req.query.idCategories }
-        ).sort('createDate')
+
+        let listProductCode
+        if (req.query.idCategories) {
+            listProductCode = await producCodeModel.find(
+                { idCategories: req.query.idCategories }
+            ).sort('createDate')
+        } else if (req.query.productName) {
+            listProductCode = await producCodeModel.find(
+                { productName: { $regex: req.query.search, $options: 'i' } }
+            ).sort('createDate')
+        }
         let listCodeId = listProductCode.map((value => {
             return value._id
         }))

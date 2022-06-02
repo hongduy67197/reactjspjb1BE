@@ -6,6 +6,7 @@ const port = 3150;
 const Router = require("./router");
 const cookie = require("cookie-parser");
 
+app.set('view engine', 'ejs')
 app.use("/views", express.static(path.join(__dirname, "./views")));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
