@@ -32,6 +32,7 @@ exports.getInforCategories = async function (req, res) {
         res.json(selectCategories);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -122,6 +123,7 @@ exports.getInforProductCode = async function (req, res) {
         res.json(selectProductCode);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -131,6 +133,7 @@ exports.getListProductCode = async function (req, res) {
         res.json(listProductCode);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -174,6 +177,7 @@ exports.createProductCode = async function (req, res) {
         }
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -214,6 +218,7 @@ exports.editProductCode = async function (req, res) {
         res.json(editProductCode);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -226,6 +231,7 @@ exports.deleteProductCodeCD = async function (req, res) {
         res.json(deleteProductCD, dropProductfollowPoductCode);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -238,6 +244,7 @@ exports.getListProduct = async function (req, res) {
         res.json(listProduct);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -250,6 +257,7 @@ exports.getInforProduct = async function (req, res) {
         res.json(productSelecter);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -297,7 +305,8 @@ exports.createProduct = async function (req, res) {
         }
         res.json(newProduct);
     } catch (error) {
-        console.log(123213, error);
+        console.log(error);
+        res.json(error)
     }
 };
 
@@ -352,6 +361,7 @@ exports.editProduct = async function (req, res) {
         res.json(editProduct);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -372,6 +382,7 @@ exports.getListUser = async function (req, res) {
         res.json(listUser);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -381,6 +392,7 @@ exports.getInforUserSelect = async function (req, res) {
         res.json(userSelecter);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -414,6 +426,7 @@ exports.updateUserInfor = async function (req, res) {
         res.json(updateUser);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -426,6 +439,7 @@ exports.deleteUser = async function (req, res) {
         res.json(dropUser, dropCartsUser);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -435,6 +449,7 @@ exports.getListOrderAd = async function (req, res) {
         res.json(listOrderAd);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -446,6 +461,7 @@ exports.getInforOrderSelect = async function (req, res) {
         res.json(orderSelect);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -458,6 +474,7 @@ exports.getListOrderFromUser = async function (req, res) {
         res.json(listOrderFromUser);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -475,6 +492,7 @@ exports.editOrder = async function (req, res) {
         res.json(fixOrder);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -483,7 +501,8 @@ exports.deleteOrder = async function (req, res) {
         let dropOrder = await orderModel.deleteOne({ _id: req.param.idOrder });
         res.json(dropOrder);
     } catch (error) {
-        console.log();
+        console.log(error);
+        res.json(error)
     }
 };
 
@@ -499,6 +518,7 @@ exports.testCreateUser = async function (req, res) {
         res.json(abcCreateCarts);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -508,6 +528,7 @@ exports.getListIcon = async function (req, res) {
         res.json(listIcon);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -519,6 +540,7 @@ exports.searchIcon = async function (req, res) {
         res.json(searchIconProduct)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -541,6 +563,7 @@ exports.getNewIcon = async function (req, res) {
         res.json(newIcon);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -569,6 +592,7 @@ exports.editIcon = async function (req, res) {
         res.json(editProduct);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -578,6 +602,7 @@ exports.deleteIcon = async function (req, res) {
         res.json(dropIcon);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -587,6 +612,7 @@ exports.getListSlide = async function (req, res) {
         res.json(listSlide);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -598,6 +624,7 @@ exports.searchSlide = async function (req, res) {
         res.json(searchSlide)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -619,6 +646,7 @@ exports.getNewSlide = async function (req, res) {
         res.json(newSlide);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -645,6 +673,7 @@ exports.editSlide = async function (req, res) {
         res.json(editSlide);
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 };
 
@@ -656,6 +685,7 @@ exports.deleteSlide = async function (req, res) {
         res.json(dropSlide)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -673,6 +703,7 @@ exports.testCreateOrder = async function (req, res) {
         res.json(newOrderFake)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -694,6 +725,7 @@ exports.testEditOrder = async function (req, res) {
         res.json(editOrder)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -705,5 +737,6 @@ exports.testDeleteOrder = async function (req, res) {
         res.json(testdropOrder)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }

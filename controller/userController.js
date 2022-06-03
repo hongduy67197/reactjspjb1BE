@@ -88,6 +88,7 @@ exports.logOut = async function (req, res) {
         res.status(200).json({ message: 'logout success' })
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -97,6 +98,7 @@ exports.getUserInfor = async function (req, res) {
         res.json(req.user)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -140,6 +142,7 @@ exports.getListCarts = async function (req, res) {
         res.json(listCartsUser)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -151,6 +154,7 @@ exports.getListProdutc = async function (req, res) {
         res.json({ listProductList, listProductCode, listCategories })
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -169,6 +173,7 @@ exports.checkIdProduct = async function (req, res) {
         res.json(searchIdProduct)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -234,6 +239,7 @@ exports.getFillterProductCode = async function (req, res) {
         res.json({ listProductCode, listData, listProduct })
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -259,6 +265,7 @@ exports.getAdllProductCode = async function (req, res) {
         res.json(dataHome)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -270,6 +277,7 @@ exports.getListSearchInput = async function (req, res) {
         res.json(listSearchProductCode)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -290,6 +298,7 @@ exports.getInforListProductCode = async function (req, res) {
         res.json({ getProductCode })
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 exports.updateCarts = async function (req, res) {
@@ -332,6 +341,7 @@ exports.updateCarts = async function (req, res) {
         }
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -354,6 +364,7 @@ exports.getInforOrderSelect = async function (req, res) {
         res.json(inforOrderSelect)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -387,6 +398,7 @@ exports.createOrderUser = async function (req, res) {
         res.json(newOrderUser)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -398,6 +410,7 @@ exports.deleteOrderUser = async function (req, res) {
         res.json(dropOrderUser)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -417,6 +430,7 @@ exports.createCommentProduct = async function (req, res) {
         res.json(newCommentProduct)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -433,6 +447,7 @@ exports.editCommentProduct = async function (req, res) {
         res.json(editCommentPro)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
 
@@ -444,5 +459,6 @@ exports.deleteCommentProduct = async function (req, res) {
         res.json(dropComment)
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
