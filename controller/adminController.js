@@ -157,7 +157,7 @@ exports.createProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold, 
+                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                     createDate: new Date(),
                 });
@@ -172,7 +172,7 @@ exports.createProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold, 
+                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                     createDate: new Date(),
                 });
@@ -201,7 +201,7 @@ exports.editProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold, 
+                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                 }
             );
@@ -218,7 +218,7 @@ exports.editProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold, 
+                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                 }
             );
@@ -242,6 +242,18 @@ exports.deleteProductCodeCD = async function (req, res) {
         res.json(error)
     }
 };
+
+exports.getListFollowProductCode = async function (req, res) {
+    try {
+        let data = await productModel.find(
+            { idProductCode: req.params.idProductCode }
+        ).populate('idProductCode')
+        res.json(data)
+    } catch (error) {
+        console.log(error);
+        res.json(error)
+    }
+}
 
 exports.getListProduct = async function (req, res) {
     try {
