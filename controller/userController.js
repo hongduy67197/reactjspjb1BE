@@ -253,8 +253,8 @@ exports.getFillterProductCode = async function (req, res) {
             let listCodeId = listProductCode.map((value) => {
                 return value._id
             })
-            let listCatefories = await categoriesModel.find({ idProductCode: { $in: listCodeId } })
-            let listProduct = await productModel.find()
+            let listCatefories = await categoriesModel.find()
+            let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } })
             let listRam = []
             let listPriceRange = []
             let listStorage = []
@@ -285,7 +285,7 @@ exports.getFillterProductCode = async function (req, res) {
                     return (value.idProductCode == listProductCode[i]._id)
                 })
                 for (let j = 0; j < listCatefories.length; j++) {
-                    if (listProductCode[i].idCategories == listCatefories[j]._id) {
+                    if (listProductCode[i].idCategories[0] == listCatefories[j]._id) {
                         listProductCode[i]._doc.brand = listCatefories[j].categoriesName
                     }
                 }
