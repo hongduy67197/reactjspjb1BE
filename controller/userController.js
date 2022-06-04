@@ -181,6 +181,9 @@ exports.getFillterProductCode = async function (req, res) {
     try {
 
         let listProductCode
+        let dataCategories = await categoriesModel.findOne(
+            {_id: req.query.idCategories}
+        )
         if (req.query.idCategories) {
             listProductCode = await producCodeModel.find(
                 { idCategories: req.query.idCategories }
@@ -199,12 +202,6 @@ exports.getFillterProductCode = async function (req, res) {
         let listStorage = []
         let listRom = []
         let listColor = []
-        for (let j = 0; j < listProductCode.length; j++) {
-            let fillterList = listProduct.filter(function (value) {
-                return (value.idProductCode == listProductCode[j]._id)
-            })
-            listProductCode[j]._doc.products = fillterList
-        }
         for (let i = 0; i < listProduct.length; i++) {
             if (!listColor.includes(listProduct[i].color)) {
                 listColor.push(listProduct[i].color)
@@ -222,6 +219,30 @@ exports.getFillterProductCode = async function (req, res) {
                 listRom.push(listProduct[i].rom)
             }
         }
+        let ramRange = []
+        let romRange = []
+        let priceReferent = []
+        for (let j = 0; j < listProductCode.length; j++) {
+            let fillterList = listProduct.filter(function (value) {
+                return (value.idProductCode == listProductCode[j]._id)
+            })
+            for(let i =0;i< fillterList.length;i++){
+                if(ramRange.indexOf(fillterList[i].ram) == -1){
+                    ramRange.push(fillterList[i].ram)
+                }
+                if(romRange.indexOf(fillterList[i].rom) == -1){
+                    romRange.push(fillterList[i].rom)
+                }
+                if(priceReferent.indexOf(fillterList[i].priceRange) == -1){
+                    priceReferent.push(fillterList[i].priceRange)
+                }
+            }
+            listProductCode[j]._doc.romRange = romRange
+            listProductCode[j]._doc.ramRange = ramRange
+            listProductCode[j]._doc.priceReferent = priceReferent
+            listProductCode[j]._doc.products = fillterList
+            listProductCode[j]._doc.brand = dataCategories.categoriesName
+        }
         let listData = {
             listRam: listRam,
             listPriceRange: listPriceRange,
@@ -229,7 +250,7 @@ exports.getFillterProductCode = async function (req, res) {
             listRom: listRom,
             listColor: listColor,
         }
-        res.json({ listProductCode, listData, listProduct })
+        res.json({ listProductCode, listData , dataCategories})
     } catch (error) {
         console.log(error);
         res.json(error)

@@ -157,6 +157,8 @@ exports.createProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
+                    countSold: req.body.countSold, 
+                    Sale: req.body.Sale,
                     createDate: new Date(),
                 });
             } else {
@@ -170,6 +172,8 @@ exports.createProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
+                    countSold: req.body.countSold, 
+                    Sale: req.body.Sale,
                     createDate: new Date(),
                 });
             }
@@ -197,6 +201,8 @@ exports.editProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
+                    countSold: req.body.countSold, 
+                    Sale: req.body.Sale,
                 }
             );
         } else {
@@ -212,6 +218,8 @@ exports.editProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
+                    countSold: req.body.countSold, 
+                    Sale: req.body.Sale,
                 }
             );
         }
