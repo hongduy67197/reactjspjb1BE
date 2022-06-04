@@ -193,8 +193,7 @@ exports.getFillterProductCode = async function (req, res) {
         let listCodeId = listProductCode.map((value => {
             return value._id
         }))
-        let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } }).populate('product')
-        let listIcon = await iconModel.find()
+        let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } }).populate('idProductCode')
         let listRam = []
         let listPriceRange = []
         let listStorage = []
@@ -205,12 +204,7 @@ exports.getFillterProductCode = async function (req, res) {
                 return (value.idProductCode == listProductCode[j]._id)
             })
             listProductCode[j]._doc.products = fillterList
-            for (let k = 0; k < listProduct.length; k++) {
-                let filterIcon = listIcon.filter(function (data) {
-                    return (data._id == listProduct[k].icon)
-                })
-            }
-            listProductCode[j]._doc.listIcon = filterIcon
+
         }
         for (let i = 0; i < listProduct.length; i++) {
             if (!listColor.includes(listProduct[i].color)) {
