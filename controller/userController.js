@@ -327,11 +327,19 @@ exports.getAdllProductCode = async function (req, res) {
         let listProductCode = await producCodeModel.find()
         let listProduct = await productModel.find()
         let data = []
+        let listIcon = await iconModel.find()
         for (let i = 0; i < listProductCode.length; i++) {
             let filterList = listProduct.filter(function (value) {
                 return (value.idProductCode == listProductCode[i]._id)
             })
             listProductCode[i]._doc.data = filterList
+            for (let j = 0; j < listProductCode[i].data; j++) {
+                for (let k = 0; k < listIcon.length; k++) {
+                    if (listProductCode[i].data[j].icon == listIcon[k]._id) {
+                        listProductCode[i].data[j].icon = listIcon[k]
+                    }
+                }
+            }
             data.push(listProductCode[i])
         }
         let dataHome = {
