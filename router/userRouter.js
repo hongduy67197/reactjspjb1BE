@@ -5,6 +5,7 @@ const multer = require('multer')
 const path = require('path');
 const { checkToken } = require('../midderware/auth');
 const userCommentRouter = require('./userCommentRouter')
+const userCartsRouter = require('./userCartsRouter')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './views/assets/img/avatar')
@@ -31,8 +32,7 @@ router.patch('/changePassword', checkToken, userController.changePassword)
 router.put('/:idUser', checkToken, upload.single('avatar'), userController.editUserInfor)
 
 // carts
-router.get('/carts', checkToken, userController.getListCarts)
-router.patch('/carts', checkToken, userController.updateCarts)
+router.use('/carts', userCartsRouter)
 
 // productCode
 router.get('/fillter', userController.getFillterProductCode)
