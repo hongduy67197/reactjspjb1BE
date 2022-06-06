@@ -26,7 +26,7 @@ async function checkToken(req, res, next) {
     let searchTokenUser
     try {
         let token = req.headers.authorization
-
+        // const check = await userModel.findOne({email: 'hoangcanon750d@gmail.com'})
         searchTokenUser = await userModel.findOne(
             { token: token }
         )
@@ -45,10 +45,7 @@ async function checkToken(req, res, next) {
         }
     } catch (error) {
         if (error.message == 'jwt expired') {
-            const token = jwt.sign({ id: searchTokenUser._id }, 'projectFEB1', { expiresIn: 10 })
-            await userModel.updateOne({ _id: searchTokenUser._id }, { token })
-            res.json('user', token, { expires: new Date(Date.now() + 900000) })
-            next()
+            res.json({message: 'jwt expired'})
         } else {
             res.json(error)
         }
