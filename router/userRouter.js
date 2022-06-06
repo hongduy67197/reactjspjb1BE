@@ -24,6 +24,7 @@ router.get('/', checkToken, userController.getUserInfor)
 router.post('/register', userController.register)
 router.post('/login', userController.login)
 router.post('/logout', checkToken, userController.logOut)
+router.patch('/changePassword', checkToken, userController.changePassword)
 router.put('/:idUser', checkToken, upload.single('avatar'), userController.editUserInfor)
 
 // carts

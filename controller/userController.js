@@ -14,6 +14,7 @@ const categoriesModel = require('../models/categoriesSchema')
 const sliderModel = require('../models/sliderSchema')
 const commentModel = require('../models/commentSchema')
 const iconModel = require('../models/iconSchema')
+const bcrypt = require('bcryptjs')
 
 exports.register = async function (req, res) {
     try {
@@ -47,9 +48,9 @@ exports.verifyEmail = async (req, res) => {
             console.log(err);
         })
         user.email = email;
-        user.code = code;
+        user.code = null;
         await user.save()
-        res.status(200).send('create succes')
+        res.status(200).send(`create succes click <a href="http://localhost:3000/User/UserLogin">Here</a> to back web`)
     } catch (error) {
         res.status(400).send({ message: error })
     }
@@ -86,6 +87,32 @@ exports.logOut = async function (req, res) {
             }
         )
         res.status(200).json({ message: 'logout success' })
+    } catch (error) {
+        console.log(error);
+        res.json(error)
+    }
+}
+
+exports.changePassword = async function (req, res) {
+    try {
+        let oldPassword = req.user.password;
+        let inputPassword = req.body.password
+        let newPassword = req.body.newPassword
+        let checkPassword = await bcrypt.compare(inputPassword, oldPassword)
+        let newPasswordBase
+        if (checkPassword == true) {
+            newPasswordBase = bcrypt.hashSync(newPassword, 10)
+            await userModel.updateOne(
+                { _id: req.user._id },
+                {
+                    password: newPasswordBase,
+                    token: ''
+                }
+            )
+            res.status(200).json('change password success')
+        } else {
+            res.status(400).json('your password is not right')
+        }
     } catch (error) {
         console.log(error);
         res.json(error)
