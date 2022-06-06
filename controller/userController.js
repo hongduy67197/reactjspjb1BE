@@ -48,7 +48,7 @@ exports.verifyEmail = async (req, res) => {
             console.log(err);
         })
         user.email = email;
-        user.code = null;
+        user.code = '';
         await user.save()
         res.status(200).send(`create succes click <a href="http://localhost:3000/User/UserLogin">Here</a> to back web`)
     } catch (error) {
@@ -225,6 +225,7 @@ exports.getFillterProductCode = async function (req, res) {
             let listStorage = []
             let listRom = []
             let listColor = []
+
             for (let i = 0; i < listProduct.length; i++) {
                 if (!listColor.includes(listProduct[i].color)) {
                     listColor.push(listProduct[i].color)
@@ -245,6 +246,8 @@ exports.getFillterProductCode = async function (req, res) {
             let ramRange = []
             let romRange = []
             let priceReferent = []
+            let listPrice = []
+            let listCountSold = []
             for (let j = 0; j < listProductCode.length; j++) {
                 let fillterList = listProduct.filter(function (value) {
                     return (value.idProductCode == listProductCode[j]._id)
@@ -259,7 +262,21 @@ exports.getFillterProductCode = async function (req, res) {
                     if (priceReferent.indexOf(fillterList[i].priceRange) == -1) {
                         priceReferent.push(fillterList[i].priceRange)
                     }
+                    if (listPrice.indexOf(fillterList[i].price) == -1) {
+                        listPrice.push(fillterList[i].price)
+                    }
+                    if (listCountSold.indexOf(fillterList[i].countSold) == -1) {
+                        listCountSold.push(fillterList[i].countSold)
+                    }
                 }
+                let countSold = 0;
+                for (let k = 0; k < listCountSold.length; k++) {
+                    countSold += listCountSold[k]
+                }
+
+                let price = Math.min(...listPrice)
+                listProductCode[j]._doc.countSold = countSold
+                listProductCode[j]._doc.price = price
                 listProductCode[j]._doc.romRange = romRange
                 listProductCode[j]._doc.ramRange = ramRange
                 listProductCode[j]._doc.priceReferent = priceReferent
@@ -307,6 +324,8 @@ exports.getFillterProductCode = async function (req, res) {
             let ramRange = []
             let romRange = []
             let priceReferent = []
+            let listPrice = []
+            let listCountSold = []
             for (let i = 0; i < listProductCode.length; i++) {
                 let fillterList = listProduct.filter(function (value) {
                     return (value.idProductCode == listProductCode[i]._id)
@@ -326,7 +345,21 @@ exports.getFillterProductCode = async function (req, res) {
                     if (priceReferent.indexOf(fillterList[k].priceRange) == -1) {
                         priceReferent.push(fillterList[k].priceRange)
                     }
+                    if (listPrice.indexOf(fillterList[k].price) == -1) {
+                        listPrice.push(fillterList[k].price)
+                    }
+                    if (listCountSold.indexOf(fillterList[k].countSold) == -1) {
+                        listCountSold.push(fillterList[k].countSold)
+                    }
                 }
+                let countSold = 0;
+                for (let h = 0; h < listCountSold.length; h++) {
+                    countSold += listCountSold[h]
+                }
+
+                let price = Math.min(...listPrice)
+                listProductCode[j]._doc.countSold = countSold
+                listProductCode[j]._doc.price = price
                 listProductCode[i]._doc.romRange = romRange
                 listProductCode[i]._doc.ramRange = ramRange
                 listProductCode[i]._doc.priceReferent = priceReferent

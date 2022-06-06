@@ -301,6 +301,7 @@ exports.createProduct = async function (req, res) {
                 design: req.body.design,
                 panel: req.body.panel,
                 icon: req.body.icon,
+                countSold: req.body.countSold,
                 createDate: new Date(),
             });
         } else {
@@ -320,6 +321,7 @@ exports.createProduct = async function (req, res) {
                 design: req.body.design,
                 panel: req.body.panel,
                 icon: req.body.icon,
+                countSold: req.body.countSold,
                 createDate: new Date(),
             });
         }
@@ -353,6 +355,7 @@ exports.editProduct = async function (req, res) {
                     panel: req.body.panel,
                     suggest: req.body.suggest,
                     icon: req.body.icon,
+                    countSold: req.body.countSold,
                 }
             );
         } else {
@@ -375,6 +378,7 @@ exports.editProduct = async function (req, res) {
                     panel: req.body.panel,
                     suggest: req.body.suggest,
                     icon: req.body.icon,
+                    countSold: req.body.countSold,
                 }
             );
         }

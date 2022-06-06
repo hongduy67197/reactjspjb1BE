@@ -24,7 +24,8 @@ const productSchema = mongoose.Schema(
             required: true,
             trim: true,
         },
-        icon: { type: String, ref: 'icon' }
+        icon: { type: String, ref: 'icon' },
+        countSold: Number,
     }, { collection: 'product' }
 )
 
