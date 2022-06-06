@@ -721,7 +721,8 @@ exports.testCreateOrder = async function (req, res) {
                 address: req.body.address,
                 total: req.body.total,
                 phone: req.body.phone,
-                listProduct: req.body.listProduct
+                listProduct: req.body.listProduct,
+                status: req.body.status,
             }
         )
         res.json(newOrderFake)

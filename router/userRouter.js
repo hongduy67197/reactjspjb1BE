@@ -32,7 +32,7 @@ router.put('/:idUser', checkToken, upload.single('avatar'), userController.editU
 
 // carts
 router.get('/carts', checkToken, userController.getListCarts)
-router.put('/carts', checkToken, userController.updateCarts)
+router.patch('/carts', checkToken, userController.updateCarts)
 
 // productCode
 router.get('/fillter', userController.getFillterProductCode)

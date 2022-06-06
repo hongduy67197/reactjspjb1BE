@@ -6,8 +6,9 @@ const productRouyer = require('./adminProductRouter')
 const userRouter = require('./adminUserRouter')
 const orderRouter = require('./adminOrderRouter')
 const slideRouter = require('./adminSlideRouter')
-const iconRouter = require('./adminIconRouter')
-
+const iconRouter = require('./adminIconRouter');
+const { checkRoleUser } = require('../midderware/auth');
+// router.use(checkRoleUser)
 router.use('/categories', categoriesRouter);
 router.use('/productcode', productCodeRouetr)
 router.use('/product', productRouyer)

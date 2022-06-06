@@ -470,10 +470,10 @@ exports.updateCarts = async function (req, res) {
             }
         }
         if (oldquantity) {
-            let newQuantity = quantity;
+            let newQuantity = Number(quantity) + oldquantity;
             let updateCartsQuantity = await cartsModel.updateOne(
-                { idUser: userId, "listProducts.idproduct": idProduct },
-                { $set: { "listProducts.$.quantity": newQuantity } }
+                { idUser: userId, "listProduct.idProduct": idProduct },
+                { $set: { "listProduct.$.quantity": newQuantity } }
             );
             res.json(updateCartsQuantity);
         } else {

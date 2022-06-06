@@ -45,7 +45,7 @@ async function checkToken(req, res, next) {
         }
     } catch (error) {
         if (error.message == 'jwt expired') {
-            res.json({message: 'jwt expired'})
+            res.json({ message: 'jwt expired' })
         } else {
             res.json(error)
         }
