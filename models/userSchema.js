@@ -10,6 +10,7 @@ const userSchema = mongoose.Schema(
         avatar: String,
         code: String,
         token: String,
+        birthDay: Date,
         role: { type: String, default: 'user' }
     }, { collection: 'users' }
 )

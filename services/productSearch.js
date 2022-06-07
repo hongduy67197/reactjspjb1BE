@@ -7,7 +7,7 @@ exports.filterProductCode = async function (req, res) {
         if (!req.query.idCategories) {
             if (req.query.name) {
                 listProduct = await producCodeModel.find(
-                    { productName: { $regex: `.*${req.query.search}*` } }
+                    { productName: { $regex: req.query.search, $options: 'i' } }
                 ).populate('idCategories')
             } else {
                 if (req.query.name && req.query.max && req.query.min) {
@@ -18,7 +18,7 @@ exports.filterProductCode = async function (req, res) {
             if (req.query.idCategories && req.query.name) {
                 listProduct = await producCodeModel.find({
                     idCategories: req.query.idCategories,
-                    productName: { $regex: `.*${req.query.search}*` },
+                    productName: { $regex: req.query.search, $options: 'i' },
                 })
             } else if (req.query.idCategories && req.query.priceRange) {
                 let productCodeSearch = await producCodeModel.find(
