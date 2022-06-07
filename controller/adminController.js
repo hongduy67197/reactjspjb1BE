@@ -236,7 +236,7 @@ exports.deleteProductCodeCD = async function (req, res) {
             req.params.idProductCode
         );
         let deleteProductCD = await deleteProductCode(req.params.idProductCode);
-        res.json(deleteProductCD, dropProductfollowPoductCode);
+        res.json({ deleteProductCD, dropProductfollowPoductCode });
     } catch (error) {
         console.log(error);
         res.json(error)
@@ -460,7 +460,7 @@ exports.deleteUser = async function (req, res) {
             idUser: req.params.idUser,
         });
         let dropUser = await userModel.deleteOne({ _id: req.params.idUser });
-        res.json(dropUser, dropCartsUser);
+        res.json({ dropUser, dropCartsUser });
     } catch (error) {
         console.log(error);
         res.json(error)
