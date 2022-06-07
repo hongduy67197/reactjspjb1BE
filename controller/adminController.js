@@ -236,7 +236,7 @@ exports.deleteProductCodeCD = async function (req, res) {
             req.params.idProductCode
         );
         let deleteProductCD = await deleteProductCode(req.params.idProductCode);
-        res.json(deleteProductCD, dropProductfollowPoductCode);
+        res.json({ deleteProductCD, dropProductfollowPoductCode });
     } catch (error) {
         console.log(error);
         res.json(error)
