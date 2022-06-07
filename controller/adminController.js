@@ -460,7 +460,7 @@ exports.deleteUser = async function (req, res) {
             idUser: req.params.idUser,
         });
         let dropUser = await userModel.deleteOne({ _id: req.params.idUser });
-        res.json(dropUser, dropCartsUser);
+        res.json({ dropUser, dropCartsUser });
     } catch (error) {
         console.log(error);
         res.json(error)
