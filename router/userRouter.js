@@ -19,11 +19,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 // user
-router.get("/:email/:code", userController.verifyEmail);
-router.get("/", checkToken, userController.getUserInfor);
-router.post("/register", userController.register);
-router.post("/login", userController.login);
-router.put("/:idUser", upload.single("avatar"), userController.editUserInfor);
+router.post('/register', userController.register)
+router.post('/login', userController.login)
+router.get('/:email/:code', userController.verifyEmail)
+
+// router.use(checkToken)
+router.get('/', checkToken, userController.getUserInfor)
+router.post('/refreshToken', userController.refeshToken)
+router.post('/logout', checkToken, userController.logOut)
+router.patch('/changePassword', checkToken, userController.changePassword)
+router.put('/', checkToken, upload.single('avatar'), userController.editUserInfor)
 
 // carts
 router.get("/carts", checkToken, userController.getListCarts);
