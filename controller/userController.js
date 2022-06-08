@@ -69,7 +69,6 @@ exports.login = async (req, res) => {
             let token = jwt.sign({ id: user._id }, "projectFEB1", { expiresIn: 10 });
             await userModel.updateOne({ _id: user._id }, { token });
             // res.cookie("user", token, { expires: new Date(Date.now() + 900000) });
-            console.log(76, token);
             res.json({
                 data: { token: token, role: user.role, userData: user },
                 mess: "oke",
