@@ -403,13 +403,31 @@ exports.getAdllProductCode = async function (req, res) {
                 return value.idProductCode == listProductCode[i]._id;
             });
             listProductCode[i]._doc.data = filterList;
-            for (let j = 0; j < listProductCode[i].data; j++) {
-                for (let k = 0; k < listIcon.length; k++) {
-                    if (listProductCode[i].data[j].icon == listIcon[k]._id) {
-                        listProductCode[i].data[j].icon = listIcon[k];
+            let listPrice = [];
+            let minPrice;
+            let maxPrice;
+            if (listProductCode[i]._doc.data.length > 0) {
+                for (let j = 0; j < listProductCode[i]._doc.data.length; j++) {
+                    for (let k = 0; k < listIcon.length; k++) {
+                        if (listProductCode[i]._doc.data[j].icon == listIcon[k]._id) {
+                            listProductCode[i]._doc.data[j].icon = listIcon[k];
+                        }
+                    }
+                    if (listPrice.indexOf(listProductCode[i]._doc.data[j].price) == -1) {
+                        listPrice.push(listProductCode[i]._doc.data[j].price)
                     }
                 }
+                minPrice = Math.min(...listPrice)
+                maxPrice = Math.max(...listPrice)
+            } else {
+                minPrice = 0;
+                maxPrice = 0;
+                listPrice = [];
             }
+
+            listProductCode[i]._doc.minPrice = minPrice
+            listProductCode[i]._doc.maxPrice = maxPrice
+            listProductCode[i]._doc.listPrice = listPrice
             data.push(listProductCode[i]);
         }
         let dataHome = {
