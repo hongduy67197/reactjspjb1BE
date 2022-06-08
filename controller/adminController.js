@@ -120,6 +120,10 @@ exports.getInforProductCode = async function (req, res) {
         let selectProductCode = await producCodeModel
             .findOne({ _id: req.params.idProductCode })
             .populate("idCategories");
+        let listProdut = await productModel.find(
+            { idProductCode: req.params.idProductCode }
+        )
+        selectProductCode._doc.listProduct = listProdut
         res.json(selectProductCode);
     } catch (error) {
         console.log(error);

@@ -29,7 +29,7 @@ router.get('/', checkToken, userController.getUserInfor)
 router.post('/refreshToken', userController.refeshToken)
 router.post('/logout', checkToken, userController.logOut)
 router.patch('/changePassword', checkToken, userController.changePassword)
-router.put('/:idUser', checkToken, upload.single('avatar'), userController.editUserInfor)
+router.put('/', checkToken, upload.single('avatar'), userController.editUserInfor)
 
 // carts
 router.use('/carts', userCartsRouter)
