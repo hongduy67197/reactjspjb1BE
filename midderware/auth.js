@@ -26,7 +26,6 @@ async function checkToken(req, res, next) {
     let searchTokenUser
     try {
         let token = req.headers.authorization
-        // const check = await userModel.findOne({email: 'hoangcanon750d@gmail.com'})
         searchTokenUser = await userModel.findOne(
             { token: token }
         )
