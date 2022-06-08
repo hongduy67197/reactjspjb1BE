@@ -157,7 +157,6 @@ exports.createProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                     createDate: new Date(),
                 });
@@ -172,7 +171,6 @@ exports.createProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                     createDate: new Date(),
                 });
@@ -201,7 +199,6 @@ exports.editProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                 }
             );
@@ -218,7 +215,6 @@ exports.editProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                 }
             );
@@ -522,7 +518,7 @@ exports.editOrder = async function (req, res) {
 
 exports.deleteOrder = async function (req, res) {
     try {
-        let dropOrder = await orderModel.deleteOne({ _id: req.param.idOrder });
+        let dropOrder = await orderModel.deleteOne({ _id: req.params.idOrder });
         res.json(dropOrder);
     } catch (error) {
         console.log(error);

@@ -156,55 +156,182 @@ exports.checkIdProduct = async function (req, res) {
 };
 
 exports.getFillterProductCode = async function (req, res) {
-  try {
-    let listProductCode = await producCodeModel
-      .find({ idCategories: req.query.idCategories })
-      .sort("createDate");
-    let listCodeId = listProductCode.map((value) => {
-      return value._id;
-    });
-    let listProduct = await productModel.find({
-      idProductCode: { $in: listCodeId },
-    });
-    let listRam = [];
-    let listPriceRange = [];
-    let listStorage = [];
-    let listRom = [];
-    let listColor = [];
-    for (let j = 0; j < listProductCode.length; j++) {
-      let fillterList = listProduct.filter(function (value) {
-        return value.idProductCode == listProductCode[j]._id;
-      });
-      listProductCode[j]._doc.products = fillterList;
+    try {
+        let listData
+        let listProductCode
+        if (req.query.idCategories) {
+            let dataCategories
+            dataCategories = await categoriesModel.findOne(
+                { _id: req.query.idCategories }
+            )
+            listProductCode = await producCodeModel.find(
+                { idCategories: req.query.idCategories }
+            ).sort('createDate')
+            let listCodeId = listProductCode.map((value => {
+                return value._id
+            }))
+            let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } })
+            let listRam = []
+            let listPriceRange = []
+            let listStorage = []
+            let listRom = []
+            let listColor = []
+
+            for (let i = 0; i < listProduct.length; i++) {
+                if (!listColor.includes(listProduct[i].color)) {
+                    listColor.push(listProduct[i].color)
+                }
+                if (!listRam.includes(listProduct[i].ram)) {
+                    listRam.push(listProduct[i].ram)
+                }
+                if (listPriceRange.indexOf(listProduct[i].priceRange) == -1) {
+                    listPriceRange.push(listProduct[i].priceRange)
+                }
+                if (listStorage.indexOf(listProduct[i].storage) == -1) {
+                    listStorage.push(listProduct[i].storage)
+                }
+                if (listRom.indexOf(listProduct[i].rom) == -1) {
+                    listRom.push(listProduct[i].rom)
+                }
+            }
+            let ramRange = []
+            let romRange = []
+            let priceReferent = []
+            let listPrice = []
+            let listCountSold = []
+            for (let j = 0; j < listProductCode.length; j++) {
+                let fillterList = listProduct.filter(function (value) {
+                    return (value.idProductCode == listProductCode[j]._id)
+                })
+                for (let i = 0; i < fillterList.length; i++) {
+                    if (ramRange.indexOf(fillterList[i].ram) == -1) {
+                        ramRange.push(fillterList[i].ram)
+                    }
+                    if (romRange.indexOf(fillterList[i].rom) == -1) {
+                        romRange.push(fillterList[i].rom)
+                    }
+                    if (priceReferent.indexOf(fillterList[i].priceRange) == -1) {
+                        priceReferent.push(fillterList[i].priceRange)
+                    }
+                    if (listPrice.indexOf(fillterList[i].price) == -1) {
+                        listPrice.push(fillterList[i].price)
+                    }
+                    if (listCountSold.indexOf(fillterList[i].countSold) == -1) {
+                        listCountSold.push(fillterList[i].countSold)
+                    }
+                }
+                let countSold = 0;
+                for (let k = 0; k < listCountSold.length; k++) {
+                    if (listCountSold[k] == undefined) {
+                        listCountSold[k] = 0;
+                    }
+                    countSold += listCountSold[k]
+                }
+                let price = Math.min(...listPrice)
+                listProductCode[j]._doc.countSold = countSold
+                listProductCode[j]._doc.price = price
+                listProductCode[j]._doc.romRange = romRange
+                listProductCode[j]._doc.ramRange = ramRange
+                listProductCode[j]._doc.priceReferent = priceReferent
+                listProductCode[j]._doc.products = fillterList
+                listProductCode[j]._doc.brand = dataCategories.categoriesName
+            }
+            listData = {
+                listRam: listRam,
+                listPriceRange: listPriceRange,
+                listStorage: listStorage,
+                listRom: listRom,
+                listColor: listColor,
+            }
+        } else if (req.query.productName) {
+            listProductCode = await producCodeModel.find(
+                { productName: { $regex: req.query.productName, $options: 'i' } }
+            ).sort('createDate')
+            let listCodeId = listProductCode.map((value) => {
+                return value._id
+            })
+            let listCatefories = await categoriesModel.find()
+            let listProduct = await productModel.find({ idProductCode: { $in: listCodeId } })
+            let listRam = []
+            let listPriceRange = []
+            let listStorage = []
+            let listRom = []
+            let listColor = []
+            for (let i = 0; i < listProduct.length; i++) {
+                if (!listColor.includes(listProduct[i].color)) {
+                    listColor.push(listProduct[i].color)
+                }
+                if (!listRam.includes(listProduct[i].ram)) {
+                    listRam.push(listProduct[i].ram)
+                }
+                if (listPriceRange.indexOf(listProduct[i].priceRange) == -1) {
+                    listPriceRange.push(listProduct[i].priceRange)
+                }
+                if (listStorage.indexOf(listProduct[i].storage) == -1) {
+                    listStorage.push(listProduct[i].storage)
+                }
+                if (listRom.indexOf(listProduct[i].rom) == -1) {
+                    listRom.push(listProduct[i].rom)
+                }
+            }
+            let ramRange = []
+            let romRange = []
+            let priceReferent = []
+            let listPrice = []
+            let listCountSold = []
+            for (let i = 0; i < listProductCode.length; i++) {
+                let fillterList = listProduct.filter(function (value) {
+                    return (value.idProductCode == listProductCode[i]._id)
+                })
+                for (let j = 0; j < listCatefories.length; j++) {
+                    if (listProductCode[i].idCategories[0] == listCatefories[j]._id) {
+                        listProductCode[i]._doc.brand = listCatefories[j].categoriesName
+                    }
+                }
+                for (let k = 0; k < fillterList.length; k++) {
+                    if (ramRange.indexOf(fillterList[k].ram) == -1) {
+                        ramRange.push(fillterList[k].ram)
+                    }
+                    if (romRange.indexOf(fillterList[k].rom) == -1) {
+                        romRange.push(fillterList[k].rom)
+                    }
+                    if (priceReferent.indexOf(fillterList[k].priceRange) == -1) {
+                        priceReferent.push(fillterList[k].priceRange)
+                    }
+                    if (listPrice.indexOf(fillterList[k].price) == -1) {
+                        listPrice.push(fillterList[k].price)
+                    }
+                    if (listCountSold.indexOf(fillterList[k].countSold) == -1) {
+                        listCountSold.push(fillterList[k].countSold)
+                    }
+                }
+                let countSold = 0;
+                for (let h = 0; h < listCountSold.length; h++) {
+                    countSold += listCountSold[h]
+                }
+
+                let price = Math.min(...listPrice)
+                listProductCode[j]._doc.countSold = countSold
+                listProductCode[j]._doc.price = price
+                listProductCode[i]._doc.romRange = romRange
+                listProductCode[i]._doc.ramRange = ramRange
+                listProductCode[i]._doc.priceReferent = priceReferent
+                listProductCode[i]._doc.products = fillterList
+            }
+            listData = {
+                listRam: listRam,
+                listPriceRange: listPriceRange,
+                listStorage: listStorage,
+                listRom: listRom,
+                listColor: listColor,
+            }
+        }
+        res.json({ listProductCode, listData });
+    } catch (error) {
+        console.log(error);
+        res.json(error);
     }
-    for (let i = 0; i < listProduct.length; i++) {
-      if (!listColor.includes(listProduct[i].color)) {
-        listColor.push(listProduct[i].color);
-      }
-      if (!listRam.includes(listProduct[i].ram)) {
-        listRam.push(listProduct[i].ram);
-      }
-      if (listPriceRange.indexOf(listProduct[i].priceRange) == -1) {
-        listPriceRange.push(listProduct[i].priceRange);
-      }
-      if (listStorage.indexOf(listProduct[i].storage) == -1) {
-        listStorage.push(listProduct[i].storage);
-      }
-      if (listRom.indexOf(listProduct[i].rom) == -1) {
-        listRom.push(listProduct[i].rom);
-      }
-    }
-    let listData = {
-      listRam: listRam,
-      listPriceRange: listPriceRange,
-      listStorage: listStorage,
-      listRom: listRom,
-      listColor: listColor,
-    };
-    res.json({ listProductCode, listData, listProduct });
-  } catch (error) {
-    console.log(error);
-  }
+    
 };
 
 exports.getAdllProductCode = async function (req, res) {
@@ -252,13 +379,13 @@ exports.getInforListProductCode = async function (req, res) {
   }
 };
 exports.updateCarts = async function (req, res) {
-  try {
-    let idProduct = req.body.idProduct;
-    let quantity = req.body.quantity;
-    let userId = req.user._id;
-    let searchProduct = await cartsModel.findOne({
-      idUser: userId,
-    });
+    try {
+        let idProduct = req.body.idProduct;
+        let quantity = req.body.quantity;
+        let userId = req.user._id;
+        let searchProduct = await cartsModel.findOne({
+            idUser: userId,
+        });
 
     let oldquantity;
     for (let i = 0; i < searchProduct.listProduct.length; i++) {
