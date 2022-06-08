@@ -279,9 +279,11 @@ exports.getFillterProductCode = async function (req, res) {
                 }
                 let countSold = 0;
                 for (let k = 0; k < listCountSold.length; k++) {
+                    if (listCountSold[k] == undefined) {
+                        listCountSold[k] = 0;
+                    }
                     countSold += listCountSold[k]
                 }
-
                 let price = Math.min(...listPrice)
                 listProductCode[j]._doc.countSold = countSold
                 listProductCode[j]._doc.price = price
