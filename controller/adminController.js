@@ -765,4 +765,3 @@ exports.testDeleteOrder = async function (req, res) {
         res.json(error)
     }
 }
-
