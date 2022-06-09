@@ -519,7 +519,7 @@ exports.updateCarts = async function (req, res) {
 exports.followOrderUser = async function (req, res) {
     try {
         let listOrderUser = await ordersModel
-            .find({ idUser: req.params.idUser })
+            .find({ idUser: req.user._id })
             .populate("listProduct.idProduct")
             .populate("idUser");
         res.json(listOrderUser);
@@ -542,11 +542,11 @@ exports.getInforOrderSelect = async function (req, res) {
 
 exports.createOrderUser = async function (req, res) {
     try {
-        let listProduct = await cartsModel.find({ idUser: req.body.idUser });
+        let listProduct = await cartsModel.find({ idUser: req.user._id });
         let listProductOrder;
         listProductOrder = listProduct[0].listProduct;
         let newOrderUser = await ordersModel.create({
-            idUser: req.body.idUser,
+            idUser: req.user._id,
             address: req.body.address,
             total: req.body.total,
             phone: req.body.phone,
