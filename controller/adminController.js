@@ -13,7 +13,35 @@ const {
     deleteProductCode,
     deleteProductCodeCate,
 } = require("../services/productCode");
+const jwt = require('jsonwebtoken')
 const sliderModel = require("../models/sliderSchema");
+
+exports.adminLogin = async function (req, res) {
+    try {
+        const { email, password } = req.body
+        const userCheck = await userModel.findOne({ email })
+        const matchPasswordUser = await comparePassword(password, userCheck.password)
+        if (!userCheck) {
+            return res.json({ status: 'email or password undifind' })
+        } else if (!userCheck.email) {
+            return res.json({ status: 'account not avilable yet' })
+        } else if (!matchPasswordUser) {
+            return res.json({ status: 'undifind password' })
+        } else if (userCheck && matchPasswordUser && userCheck.role != 'admin') {
+            return res.json({ status: 'your account not enought role' })
+        } else if (userCheck && matchPasswordUser && userCheck.role == 'admin') {
+            let token = jwt.sign({ id: userCheck._id }, "projectFEB1", { expiresIn: 10 })
+            await userModel.updateOne({ _id: userCheck._id }, { token })
+            res.json({
+                data: { token: token, role: userCheck.role, userData: userCheck },
+                mess: 'oke',
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        res.json(error)
+    }
+}
 
 exports.getListCategories = async function (req, res) {
     try {
@@ -120,6 +148,10 @@ exports.getInforProductCode = async function (req, res) {
         let selectProductCode = await producCodeModel
             .findOne({ _id: req.params.idProductCode })
             .populate("idCategories");
+        let listProdut = await productModel.find(
+            { idProductCode: req.params.idProductCode }
+        )
+        selectProductCode._doc.listProduct = listProdut
         res.json(selectProductCode);
     } catch (error) {
         console.log(error);
@@ -157,7 +189,6 @@ exports.createProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                     createDate: new Date(),
                 });
@@ -172,7 +203,6 @@ exports.createProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                     createDate: new Date(),
                 });
@@ -201,7 +231,6 @@ exports.editProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                 }
             );
@@ -218,7 +247,6 @@ exports.editProductCode = async function (req, res) {
                     specialFeatures: req.body.specialFeatures,
                     design: req.body.design,
                     panel: req.body.panel,
-                    countSold: req.body.countSold,
                     Sale: req.body.Sale,
                 }
             );
@@ -522,7 +550,7 @@ exports.editOrder = async function (req, res) {
 
 exports.deleteOrder = async function (req, res) {
     try {
-        let dropOrder = await orderModel.deleteOne({ _id: req.param.idOrder });
+        let dropOrder = await orderModel.deleteOne({ _id: req.params.idOrder });
         res.json(dropOrder);
     } catch (error) {
         console.log(error);

@@ -44,10 +44,11 @@ router.get('/product_details', userController.getInforListProductCode)
 router.post('/product', userController.checkIdProduct)
 
 // order 
-router.get('/orders/:idUser', userController.followOrderUser)
-router.get('/order/:idOrder', userController.getInforOrderSelect)
-router.post('/order', userController.createOrderUser)
-router.delete('/order/:idOrder', userController.deleteOrderUser)
+
+router.get('/orders', checkToken, userController.followOrderUser)
+router.get('/order/:idOrder', checkToken, userController.getInforOrderSelect)
+router.post('/order', checkToken, userController.createOrderUser)
+router.delete('/order/:idOrder', checkToken, userController.deleteOrderUser)
 
 // comment
 router.use('/comment', userCommentRouter)

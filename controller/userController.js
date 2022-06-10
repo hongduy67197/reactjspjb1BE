@@ -69,7 +69,6 @@ exports.login = async (req, res) => {
             let token = jwt.sign({ id: user._id }, "projectFEB1", { expiresIn: 10 });
             await userModel.updateOne({ _id: user._id }, { token });
             // res.cookie("user", token, { expires: new Date(Date.now() + 900000) });
-            console.log(76, token);
             res.json({
                 data: { token: token, role: user.role, userData: user },
                 mess: "oke",
@@ -278,9 +277,11 @@ exports.getFillterProductCode = async function (req, res) {
                 }
                 let countSold = 0;
                 for (let k = 0; k < listCountSold.length; k++) {
+                    if (listCountSold[k] == undefined) {
+                        listCountSold[k] = 0;
+                    }
                     countSold += listCountSold[k]
                 }
-
                 let price = Math.min(...listPrice)
                 listProductCode[j]._doc.countSold = countSold
                 listProductCode[j]._doc.price = price
@@ -400,13 +401,31 @@ exports.getAdllProductCode = async function (req, res) {
                 return value.idProductCode == listProductCode[i]._id;
             });
             listProductCode[i]._doc.data = filterList;
-            for (let j = 0; j < listProductCode[i].data; j++) {
-                for (let k = 0; k < listIcon.length; k++) {
-                    if (listProductCode[i].data[j].icon == listIcon[k]._id) {
-                        listProductCode[i].data[j].icon = listIcon[k];
+            let listPrice = [];
+            let minPrice;
+            let maxPrice;
+            if (listProductCode[i]._doc.data.length > 0) {
+                for (let j = 0; j < listProductCode[i]._doc.data.length; j++) {
+                    for (let k = 0; k < listIcon.length; k++) {
+                        if (listProductCode[i]._doc.data[j].icon == listIcon[k]._id) {
+                            listProductCode[i]._doc.data[j].icon = listIcon[k];
+                        }
+                    }
+                    if (listPrice.indexOf(listProductCode[i]._doc.data[j].price) == -1) {
+                        listPrice.push(listProductCode[i]._doc.data[j].price)
                     }
                 }
+                minPrice = Math.min(...listPrice)
+                maxPrice = Math.max(...listPrice)
+            } else {
+                minPrice = 0;
+                maxPrice = 0;
+                listPrice = [];
             }
+
+            listProductCode[i]._doc.minPrice = minPrice
+            listProductCode[i]._doc.maxPrice = maxPrice
+            listProductCode[i]._doc.listPrice = listPrice
             data.push(listProductCode[i]);
         }
         let dataHome = {
@@ -457,7 +476,7 @@ exports.updateCarts = async function (req, res) {
     try {
         let idProduct = req.body.idProduct;
         let quantity = req.body.quantity;
-        let userId = req.body.Iduser;
+        let userId = req.user._id;
         let searchProduct = await cartsModel.findOne({
             idUser: userId,
         });
@@ -499,7 +518,7 @@ exports.updateCarts = async function (req, res) {
 exports.followOrderUser = async function (req, res) {
     try {
         let listOrderUser = await ordersModel
-            .find({ idUser: req.params.idUser })
+            .find({ idUser: req.user._id })
             .populate("listProduct.idProduct")
             .populate("idUser");
         res.json(listOrderUser);
@@ -522,11 +541,11 @@ exports.getInforOrderSelect = async function (req, res) {
 
 exports.createOrderUser = async function (req, res) {
     try {
-        let listProduct = await cartsModel.find({ idUser: req.body.idUser });
+        let listProduct = await cartsModel.find({ idUser: req.user._id });
         let listProductOrder;
         listProductOrder = listProduct[0].listProduct;
         let newOrderUser = await ordersModel.create({
-            idUser: req.body.idUser,
+            idUser: req.user._id,
             address: req.body.address,
             total: req.body.total,
             phone: req.body.phone,
