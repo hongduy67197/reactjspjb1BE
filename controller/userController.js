@@ -126,7 +126,6 @@ exports.changePassword = async function (req, res) {
 
 exports.getUserInfor = async function (req, res) {
     try {
-        console.log(134, req.user);
         res.json(req.user);
     } catch (error) {
         console.log(error);
@@ -163,7 +162,7 @@ exports.editUserInfor = async function (req, res) {
         }
         res.json(userEdit);
     } catch (error) {
-        res.json(error);
+        res.json(168, error);
     }
 };
 
@@ -655,5 +654,6 @@ exports.refeshToken = async function (req, res) {
 
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }
