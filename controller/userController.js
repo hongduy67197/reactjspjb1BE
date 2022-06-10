@@ -489,11 +489,19 @@ exports.updateCarts = async function (req, res) {
             }
         }
         if (oldquantity) {
-            let newQuantity = Number(quantity) + oldquantity;
-            let updateCartsQuantity = await cartsModel.updateOne(
-                { idUser: userId, "listProduct.idProduct": idProduct },
-                { $set: { "listProduct.$.quantity": newQuantity } }
-            );
+            let updateCartsQuantity
+            if (quantity) {
+                let newQuantity = Number(quantity) + oldquantity;
+                updateCartsQuantity = await cartsModel.updateOne(
+                    { idUser: userId, "listProduct.idProduct": idProduct },
+                    { $set: { "listProduct.$.quantity": newQuantity } }
+                );
+            } else {
+                updateCartsQuantity = await cartsModel.updateOne(
+                    { idUser: userId, "listProduct.idProduct": idProduct },
+                    { $pull: { listProduct: { idProduct: idProduct } } }
+                );
+            }
             res.json(updateCartsQuantity);
         } else {
             let fixCarts = await cartsModel.updateOne(
