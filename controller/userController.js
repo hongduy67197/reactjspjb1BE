@@ -25,14 +25,15 @@ exports.register = async function (req, res) {
         } else {
             const hashed = await hashPassword(password);
             const newUser = await userModel.create({
+                email: email,
                 password: hashed,
             });
             const newCart = await cartsModel.create({ idUser: newUser._id });
-            codeCheck.setCode(generateCode());
-            await sendEMail(newUser._id, email, codeCheck.getCode());
-            newUser.code = codeCheck.getCode();
+            // codeCheck.setCode(generateCode());
+            // await sendEMail(newUser._id, email, codeCheck.getCode());
+            // newUser.code = codeCheck.getCode();
             await newUser.save();
-            res.status(200).json({ message: "check email" });
+            res.status(200).json({ message: "create user success" });
         }
     } catch (error) {
         res.json(error);
