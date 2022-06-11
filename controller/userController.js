@@ -367,8 +367,8 @@ exports.getFillterProductCode = async function (req, res) {
                 }
 
                 let price = Math.min(...listPrice)
-                listProductCode[j]._doc.countSold = countSold
-                listProductCode[j]._doc.price = price
+                listProductCode[i]._doc.countSold = countSold
+                listProductCode[i]._doc.price = price
                 listProductCode[i]._doc.romRange = romRange
                 listProductCode[i]._doc.ramRange = ramRange
                 listProductCode[i]._doc.priceReferent = priceReferent
