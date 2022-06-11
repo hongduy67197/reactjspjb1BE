@@ -25,14 +25,15 @@ exports.register = async function (req, res) {
         } else {
             const hashed = await hashPassword(password);
             const newUser = await userModel.create({
+                email: email,
                 password: hashed,
             });
             const newCart = await cartsModel.create({ idUser: newUser._id });
-            codeCheck.setCode(generateCode());
-            await sendEMail(newUser._id, email, codeCheck.getCode());
-            newUser.code = codeCheck.getCode();
+            // codeCheck.setCode(generateCode());
+            // await sendEMail(newUser._id, email, codeCheck.getCode());
+            // newUser.code = codeCheck.getCode();
             await newUser.save();
-            res.status(200).json({ message: "check email" });
+            res.status(200).json({ message: "create user success" });
         }
     } catch (error) {
         res.json(error);
@@ -168,7 +169,7 @@ exports.editUserInfor = async function (req, res) {
 
 exports.getListCarts = async function (req, res) {
     try {
-        let userId = req.user._id;
+        let userId = req.body.idUser;
         let listCartsUser = await cartsModel
             .find({ idUser: userId })
             .populate("listProduct.idProduct");
@@ -476,7 +477,7 @@ exports.updateCarts = async function (req, res) {
     try {
         let idProduct = req.body.idProduct;
         let quantity = req.body.quantity;
-        let userId = req.user._id;
+        let userId = req.body.idUser;
         let searchProduct = await cartsModel.findOne({
             idUser: userId,
         });
@@ -488,11 +489,19 @@ exports.updateCarts = async function (req, res) {
             }
         }
         if (oldquantity) {
-            let newQuantity = Number(quantity) + oldquantity;
-            let updateCartsQuantity = await cartsModel.updateOne(
-                { idUser: userId, "listProduct.idProduct": idProduct },
-                { $set: { "listProduct.$.quantity": newQuantity } }
-            );
+            let updateCartsQuantity
+            if (quantity) {
+                let newQuantity = Number(quantity) + oldquantity;
+                updateCartsQuantity = await cartsModel.updateOne(
+                    { idUser: userId, "listProduct.idProduct": idProduct },
+                    { $set: { "listProduct.$.quantity": newQuantity } }
+                );
+            } else {
+                updateCartsQuantity = await cartsModel.updateOne(
+                    { idUser: userId, "listProduct.idProduct": idProduct },
+                    { $pull: { listProduct: { idProduct: idProduct } } }
+                );
+            }
             res.json(updateCartsQuantity);
         } else {
             let fixCarts = await cartsModel.updateOne(
