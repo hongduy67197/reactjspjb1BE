@@ -532,6 +532,7 @@ exports.getListOrderFromUser = async function (req, res) {
 
 exports.editOrder = async function (req, res) {
     try {
+        console.log(535, req.params);
         let fixOrder = await orderModel.updateOne(
             { _id: req.params.idOrder },
             {

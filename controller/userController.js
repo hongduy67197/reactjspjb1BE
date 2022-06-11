@@ -633,7 +633,8 @@ exports.deleteCommentProduct = async function (req, res) {
 exports.refeshToken = async function (req, res) {
     try {
         let token = req.headers.authorization
-        searchTokenUser = await userModel.findOne(
+        console.log(637, token);
+        let searchTokenUser = await userModel.findOne(
             { token: token }
         )
         if (searchTokenUser) {
@@ -642,8 +643,6 @@ exports.refeshToken = async function (req, res) {
             await userModel.findOneAndUpdate({ _id: searchTokenUser._id }, { token: newToken })
             res.json({ token: newToken })
         }
-
-
     } catch (error) {
         console.log(error);
         res.json(error)
