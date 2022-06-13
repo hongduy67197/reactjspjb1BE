@@ -539,7 +539,7 @@ exports.followOrderUser = async function (req, res) {
 exports.getInforOrderSelect = async function (req, res) {
     try {
         let inforOrderSelect = await ordersModel
-            .findOne({ _id: req.params.idOrder })
+            .findOne({ _id: req.query.idOrder })
             .populate("listProduct.idProduct");
         res.json(inforOrderSelect);
     } catch (error) {
@@ -583,7 +583,7 @@ exports.createOrderUser = async function (req, res) {
 exports.deleteOrderUser = async function (req, res) {
     try {
         let dropOrderUser = await ordersModel.deleteOne({
-            _id: req.params.idOrder,
+            _id: req.query.idOrder,
         });
         res.json(dropOrderUser);
     } catch (error) {

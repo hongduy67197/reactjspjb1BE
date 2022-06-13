@@ -46,9 +46,9 @@ router.post('/product', userController.checkIdProduct)
 // order 
 
 router.get('/orders', checkToken, userController.followOrderUser)
-router.get('/order/:idOrder', checkToken, userController.getInforOrderSelect)
+router.get('/order', checkToken, userController.getInforOrderSelect)
 router.post('/order', checkToken, userController.createOrderUser)
-router.delete('/order/:idOrder', checkToken, userController.deleteOrderUser)
+router.delete('/order', checkToken, userController.deleteOrderUser)
 
 // comment
 router.use('/comment', userCommentRouter)
