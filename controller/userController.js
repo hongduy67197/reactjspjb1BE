@@ -543,7 +543,6 @@ exports.followOrderUser = async function (req, res) {
         let listOrderUser = await ordersModel
             .find({ idUser: req.user._id })
             .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } })
-            .populate("idUser");
         res.json(listOrderUser);
     } catch (error) {
         console.log(error);

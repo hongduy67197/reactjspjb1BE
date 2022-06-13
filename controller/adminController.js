@@ -497,7 +497,8 @@ exports.deleteUser = async function (req, res) {
 
 exports.getListOrderAd = async function (req, res) {
     try {
-        let listOrderAd = await orderModel.find();
+        let listOrderAd = await orderModel.find()
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } })
         res.json(listOrderAd);
     } catch (error) {
         console.log(error);
