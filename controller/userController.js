@@ -177,7 +177,7 @@ exports.getListCarts = async function (req, res) {
         let listCarts
         for (let i = 0; i < listCartsUser[0].listProduct.length; i++) {
             if (listCartsUser[0].listProduct[i].idProduct == null) {
-                listCarts = await cartsModel.updateOne({ idUser: userId }, { $pull: { listProduct: { idProduct: null } } })
+                listCarts = await cartsModel.updateOne({ idUser: userId }, { $pull: { listProduct: { _id: listCartsUser[0].listProduct[i]._id } } })
             } else if (!listCartsUser[0].listProduct[i].idProduct) {
                 listCarts = await cartsModel.updateOne({ idUser: userId }, { $pull: { listProduct: { idProduct: undefined } } })
             }
