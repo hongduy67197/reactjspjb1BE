@@ -169,7 +169,8 @@ exports.editUserInfor = async function (req, res) {
 
 exports.getListCarts = async function (req, res) {
     try {
-        let userId = req.body.idUser;
+        console.log(172, req.params)
+        let userId = req.params.idUser;
         let listCartsUser = await cartsModel
             .find({ idUser: userId })
             .populate("listProduct.idProduct");
@@ -481,7 +482,7 @@ exports.updateCarts = async function (req, res) {
         let searchProduct = await cartsModel.findOne({
             idUser: userId,
         });
-
+        console.log(484, searchProduct)
         let oldquantity;
         for (let i = 0; i < searchProduct.listProduct.length; i++) {
             if (idProduct === searchProduct.listProduct[i].idProduct) {
@@ -504,6 +505,7 @@ exports.updateCarts = async function (req, res) {
             }
             res.json(updateCartsQuantity);
         } else {
+            console.log(508)
             let fixCarts = await cartsModel.updateOne(
                 { idUser: userId },
                 {
