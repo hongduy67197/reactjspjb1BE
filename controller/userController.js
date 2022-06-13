@@ -25,14 +25,15 @@ exports.register = async function (req, res) {
         } else {
             const hashed = await hashPassword(password);
             const newUser = await userModel.create({
+                email: email,
                 password: hashed,
             });
             const newCart = await cartsModel.create({ idUser: newUser._id });
-            codeCheck.setCode(generateCode());
-            await sendEMail(newUser._id, email, codeCheck.getCode());
-            newUser.code = codeCheck.getCode();
+            // codeCheck.setCode(generateCode());
+            // await sendEMail(newUser._id, email, codeCheck.getCode());
+            // newUser.code = codeCheck.getCode();
             await newUser.save();
-            res.status(200).json({ message: "check email" });
+            res.status(200).json({ message: "create user success" });
         }
     } catch (error) {
         res.json(error);
@@ -69,7 +70,6 @@ exports.login = async (req, res) => {
             let token = jwt.sign({ id: user._id }, "projectFEB1", { expiresIn: 10 });
             await userModel.updateOne({ _id: user._id }, { token });
             // res.cookie("user", token, { expires: new Date(Date.now() + 900000) });
-            console.log(76, token);
             res.json({
                 data: { token: token, role: user.role, userData: user },
                 mess: "oke",
@@ -127,7 +127,6 @@ exports.changePassword = async function (req, res) {
 
 exports.getUserInfor = async function (req, res) {
     try {
-        console.log(134, req.user);
         res.json(req.user);
     } catch (error) {
         console.log(error);
@@ -164,7 +163,7 @@ exports.editUserInfor = async function (req, res) {
         }
         res.json(userEdit);
     } catch (error) {
-        res.json(error);
+        res.json(168, error);
     }
 };
 
@@ -368,8 +367,8 @@ exports.getFillterProductCode = async function (req, res) {
                 }
 
                 let price = Math.min(...listPrice)
-                listProductCode[j]._doc.countSold = countSold
-                listProductCode[j]._doc.price = price
+                listProductCode[i]._doc.countSold = countSold
+                listProductCode[i]._doc.price = price
                 listProductCode[i]._doc.romRange = romRange
                 listProductCode[i]._doc.ramRange = ramRange
                 listProductCode[i]._doc.priceReferent = priceReferent
@@ -482,7 +481,7 @@ exports.updateCarts = async function (req, res) {
         let searchProduct = await cartsModel.findOne({
             idUser: userId,
         });
-
+        console.log(484, searchProduct)
         let oldquantity;
         for (let i = 0; i < searchProduct.listProduct.length; i++) {
             if (idProduct === searchProduct.listProduct[i].idProduct) {
@@ -490,13 +489,22 @@ exports.updateCarts = async function (req, res) {
             }
         }
         if (oldquantity) {
-            let newQuantity = Number(quantity) + oldquantity;
-            let updateCartsQuantity = await cartsModel.updateOne(
-                { idUser: userId, "listProduct.idProduct": idProduct },
-                { $set: { "listProduct.$.quantity": newQuantity } }
-            );
+            let updateCartsQuantity
+            if (quantity) {
+                let newQuantity = Number(quantity) + oldquantity;
+                updateCartsQuantity = await cartsModel.updateOne(
+                    { idUser: userId, "listProduct.idProduct": idProduct },
+                    { $set: { "listProduct.$.quantity": newQuantity } }
+                );
+            } else {
+                updateCartsQuantity = await cartsModel.updateOne(
+                    { idUser: userId, "listProduct.idProduct": idProduct },
+                    { $pull: { listProduct: { idProduct: idProduct } } }
+                );
+            }
             res.json(updateCartsQuantity);
         } else {
+            console.log(508)
             let fixCarts = await cartsModel.updateOne(
                 { idUser: userId },
                 {
@@ -520,7 +528,7 @@ exports.updateCarts = async function (req, res) {
 exports.followOrderUser = async function (req, res) {
     try {
         let listOrderUser = await ordersModel
-            .find({ idUser: req.params.idUser })
+            .find({ idUser: req.user._id })
             .populate("listProduct.idProduct")
             .populate("idUser");
         res.json(listOrderUser);
@@ -543,11 +551,11 @@ exports.getInforOrderSelect = async function (req, res) {
 
 exports.createOrderUser = async function (req, res) {
     try {
-        let listProduct = await cartsModel.find({ idUser: req.body.idUser });
+        let listProduct = await cartsModel.find({ idUser: req.user._id });
         let listProductOrder;
         listProductOrder = listProduct[0].listProduct;
         let newOrderUser = await ordersModel.create({
-            idUser: req.body.idUser,
+            idUser: req.user._id,
             address: req.body.address,
             total: req.body.total,
             phone: req.body.phone,
@@ -635,7 +643,8 @@ exports.deleteCommentProduct = async function (req, res) {
 exports.refeshToken = async function (req, res) {
     try {
         let token = req.headers.authorization
-        searchTokenUser = await userModel.findOne(
+        console.log(637, token);
+        let searchTokenUser = await userModel.findOne(
             { token: token }
         )
         if (searchTokenUser) {
@@ -644,9 +653,8 @@ exports.refeshToken = async function (req, res) {
             await userModel.findOneAndUpdate({ _id: searchTokenUser._id }, { token: newToken })
             res.json({ token: newToken })
         }
-
-
     } catch (error) {
         console.log(error);
+        res.json(error)
     }
 }

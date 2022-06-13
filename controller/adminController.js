@@ -13,7 +13,35 @@ const {
     deleteProductCode,
     deleteProductCodeCate,
 } = require("../services/productCode");
+const jwt = require('jsonwebtoken')
 const sliderModel = require("../models/sliderSchema");
+
+exports.adminLogin = async function (req, res) {
+    try {
+        const { email, password } = req.body
+        const userCheck = await userModel.findOne({ email })
+        const matchPasswordUser = await comparePassword(password, userCheck.password)
+        if (!userCheck) {
+            return res.json({ status: 'email or password undifind' })
+        } else if (!userCheck.email) {
+            return res.json({ status: 'account not avilable yet' })
+        } else if (!matchPasswordUser) {
+            return res.json({ status: 'undifind password' })
+        } else if (userCheck && matchPasswordUser && userCheck.role != 'admin') {
+            return res.json({ status: 'your account not enought role' })
+        } else if (userCheck && matchPasswordUser && userCheck.role == 'admin') {
+            let token = jwt.sign({ id: userCheck._id }, "projectFEB1", { expiresIn: 10 })
+            await userModel.updateOne({ _id: userCheck._id }, { token })
+            res.json({
+                data: { token: token, role: userCheck.role, userData: userCheck },
+                mess: 'oke',
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        res.json(error)
+    }
+}
 
 exports.getListCategories = async function (req, res) {
     try {
@@ -504,6 +532,7 @@ exports.getListOrderFromUser = async function (req, res) {
 
 exports.editOrder = async function (req, res) {
     try {
+        console.log(535, req.params);
         let fixOrder = await orderModel.updateOne(
             { _id: req.params.idOrder },
             {
