@@ -169,10 +169,23 @@ exports.editUserInfor = async function (req, res) {
 
 exports.getListCarts = async function (req, res) {
     try {
-        let userId = req.user._id;
+        let userId = req.params.idUser;
+        // let listProductCode = await producCodeModel.find()
         let listCartsUser = await cartsModel
             .find({ idUser: userId })
-            .populate("listProduct.idProduct");
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } });
+        // for (let i = 0; i < listCartsUser[0].listProduct.length; i++) {
+        //     if (listCartsUser[0].listProduct[i].idProduct == null) {
+        //         listCartsUser[0].listProduct[i] = 0
+        //     } else {
+        //         for (let j = 0; j < listProductCode.length; j++) {
+        //             console.log(182, listCartsUser[0].listProduct[i].idProduct.idProductCode);
+        //             if (listCartsUser[0].listProduct[i].idProduct == listProductCode[j]._id) {
+        //                 console.log(123);
+        //             }
+        //         }
+        //     }
+        // }
         res.json(listCartsUser);
     } catch (error) {
         console.log(error);
@@ -529,7 +542,7 @@ exports.followOrderUser = async function (req, res) {
     try {
         let listOrderUser = await ordersModel
             .find({ idUser: req.user._id })
-            .populate("listProduct.idProduct")
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } })
             .populate("idUser");
         res.json(listOrderUser);
     } catch (error) {
@@ -541,7 +554,7 @@ exports.getInforOrderSelect = async function (req, res) {
     try {
         let inforOrderSelect = await ordersModel
             .findOne({ _id: req.params.idOrder })
-            .populate("listProduct.idProduct");
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } });
         res.json(inforOrderSelect);
     } catch (error) {
         console.log(error);

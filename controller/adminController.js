@@ -509,7 +509,7 @@ exports.getInforOrderSelect = async function (req, res) {
     try {
         let orderSelect = await orderModel
             .findOne({ _id: req.params.idOrder })
-            .populate("listProduct.idProduct");
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } });
         res.json(orderSelect);
     } catch (error) {
         console.log(error);
