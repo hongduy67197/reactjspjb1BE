@@ -170,10 +170,19 @@ exports.editUserInfor = async function (req, res) {
 exports.getListCarts = async function (req, res) {
     try {
         let userId = req.user._id;
+        // let listProductCode = await producCodeModel.find()
         let listCartsUser = await cartsModel
             .find({ idUser: userId })
-            .populate("listProduct.idProduct");
-        res.json(listCartsUser);
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } });
+        let listCarts
+        for (let i = 0; i < listCartsUser[0].listProduct.length; i++) {
+            if (listCartsUser[0].listProduct[i].idProduct == null) {
+                listCarts = await cartsModel.updateOne({ idUser: userId }, { $pull: { listProduct: { _id: listCartsUser[0].listProduct[i]._id } } })
+            } else if (!listCartsUser[0].listProduct[i].idProduct) {
+                listCarts = await cartsModel.updateOne({ idUser: userId }, { $pull: { listProduct: { idProduct: undefined } } })
+            }
+        }
+        res.json({ listCarts, listCartsUser });
     } catch (error) {
         console.log(error);
         res.json(error);
@@ -504,7 +513,6 @@ exports.updateCarts = async function (req, res) {
             }
             res.json(updateCartsQuantity);
         } else {
-            console.log(508)
             let fixCarts = await cartsModel.updateOne(
                 { idUser: userId },
                 {
@@ -529,8 +537,7 @@ exports.followOrderUser = async function (req, res) {
     try {
         let listOrderUser = await ordersModel
             .find({ idUser: req.user._id })
-            .populate("listProduct.idProduct")
-            .populate("idUser");
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } })
         res.json(listOrderUser);
     } catch (error) {
         console.log(error);
@@ -541,7 +548,7 @@ exports.getInforOrderSelect = async function (req, res) {
     try {
         let inforOrderSelect = await ordersModel
             .findOne({ _id: req.params.idOrder })
-            .populate("listProduct.idProduct");
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } });
         res.json(inforOrderSelect);
     } catch (error) {
         console.log(error);
