@@ -26,11 +26,11 @@ router.post('/login', userController.login)
 router.use('/email', userAccountRouter)
 
 // router.use(checkToken)
-router.get('/',     checkToken, userController.getUserInfor)
+router.get('/', checkToken, userController.getUserInfor)
 router.post('/refreshToken', userController.refeshToken)
-router.post('/logout', checkToken , userController.logOut)
-router.patch('/changePassword',checkToken     , userController.changePassword)
-router.put('/',   checkToken  , upload.single('avatar'), userController.editUserInfor)
+router.post('/logout', checkToken, userController.logOut)
+router.patch('/changePassword', checkToken, userController.changePassword)
+router.put('/', checkToken, upload.single('avatar'), userController.editUserInfor)
 
 // carts
 router.use('/carts', userCartsRouter)
@@ -46,10 +46,10 @@ router.post('/product', userController.checkIdProduct)
 
 // order 
 
-router.get('/orders',checkToken   , userController.followOrderUser)
-router.get('/order/:idOrder',checkToken   , userController.getInforOrderSelect)
-router.post('/order',  checkToken , userController.createOrderUser)
-router.delete('/order/:idOrder', checkToken   , userController.deleteOrderUser)
+router.get('/orders', checkToken, userController.followOrderUser)
+router.get('/order/:idOrder', checkToken, userController.getInforOrderSelect)
+router.post('/order', checkToken, userController.createOrderUser)
+router.delete('/order/:idOrder', checkToken, userController.deleteOrderUser)
 
 // comment
 router.use('/comment', userCommentRouter)

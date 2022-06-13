@@ -169,7 +169,7 @@ exports.editUserInfor = async function (req, res) {
 
 exports.getListCarts = async function (req, res) {
     try {
-        let userId = req.params.idUser;
+        let userId = req.user._id;
         // let listProductCode = await producCodeModel.find()
         let listCartsUser = await cartsModel
             .find({ idUser: userId })
