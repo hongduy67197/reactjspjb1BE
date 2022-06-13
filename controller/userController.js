@@ -169,7 +169,7 @@ exports.editUserInfor = async function (req, res) {
 
 exports.getListCarts = async function (req, res) {
     try {
-        let userId = req.user.id;
+        let userId = req.user._id;
         let listCartsUser = await cartsModel
             .find({ idUser: userId })
             .populate("listProduct.idProduct");
