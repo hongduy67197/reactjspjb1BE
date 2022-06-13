@@ -6,6 +6,7 @@ const path = require('path');
 const { checkToken } = require('../midderware/auth');
 const userCommentRouter = require('./userCommentRouter')
 const userCartsRouter = require('./userCartsRouter')
+const userAccountRouter = require('./userAccountRouter')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './views/assets/img/avatar')
@@ -22,7 +23,7 @@ const upload = multer({ storage: storage })
 // user
 router.post('/register', userController.register)
 router.post('/login', userController.login)
-// router.get('/:email/:code', userController.verifyEmail)
+router.use('/email', userAccountRouter)
 
 // router.use(checkToken)
 router.get('/',     checkToken, userController.getUserInfor)

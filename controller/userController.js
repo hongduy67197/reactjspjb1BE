@@ -169,8 +169,7 @@ exports.editUserInfor = async function (req, res) {
 
 exports.getListCarts = async function (req, res) {
     try {
-        console.log(172, req.params)
-        let userId = req.params.idUser;
+        let userId = req.user._id;
         let listCartsUser = await cartsModel
             .find({ idUser: userId })
             .populate("listProduct.idProduct");
@@ -478,7 +477,7 @@ exports.updateCarts = async function (req, res) {
     try {
         let idProduct = req.body.idProduct;
         let quantity = req.body.quantity;
-        let userId = req.body.idUser;
+        let userId = req.user._id;
         let searchProduct = await cartsModel.findOne({
             idUser: userId,
         });
