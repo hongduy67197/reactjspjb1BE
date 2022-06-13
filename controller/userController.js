@@ -174,19 +174,15 @@ exports.getListCarts = async function (req, res) {
         let listCartsUser = await cartsModel
             .find({ idUser: userId })
             .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } });
-        // for (let i = 0; i < listCartsUser[0].listProduct.length; i++) {
-        //     if (listCartsUser[0].listProduct[i].idProduct == null) {
-        //         listCartsUser[0].listProduct[i] = 0
-        //     } else {
-        //         for (let j = 0; j < listProductCode.length; j++) {
-        //             console.log(182, listCartsUser[0].listProduct[i].idProduct.idProductCode);
-        //             if (listCartsUser[0].listProduct[i].idProduct == listProductCode[j]._id) {
-        //                 console.log(123);
-        //             }
-        //         }
-        //     }
-        // }
-        res.json(listCartsUser);
+        let listCarts
+        for (let i = 0; i < listCartsUser[0].listProduct.length; i++) {
+            if (listCartsUser[0].listProduct[i].idProduct == null) {
+                listCarts = await cartsModel.updateOne({ idUser: userId }, { $pull: { listProduct: { idProduct: null } } })
+            } else if (!listCartsUser[0].listProduct[i].idProduct) {
+                listCarts = await cartsModel.updateOne({ idUser: userId }, { $pull: { listProduct: { idProduct: undefined } } })
+            }
+        }
+        res.json({ listCarts, listCartsUser });
     } catch (error) {
         console.log(error);
         res.json(error);
@@ -517,7 +513,6 @@ exports.updateCarts = async function (req, res) {
             }
             res.json(updateCartsQuantity);
         } else {
-            console.log(508)
             let fixCarts = await cartsModel.updateOne(
                 { idUser: userId },
                 {
