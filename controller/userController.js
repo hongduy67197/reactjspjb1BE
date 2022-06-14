@@ -582,7 +582,7 @@ exports.createOrderUser = async function (req, res) {
             );
         }
         let clearCartsUser = await cartsModel.updateOne(
-            { idUser: req.body.idUser },
+            { idUser: req.user._id },
             { listProduct: [] }
         );
         res.json(newOrderUser);
