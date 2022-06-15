@@ -177,9 +177,13 @@ exports.getListCarts = async function (req, res) {
         let listCarts
         for (let i = 0; i < listCartsUser[0].listProduct.length; i++) {
             if (listCartsUser[0].listProduct[i].idProduct == null) {
-                listCarts = await cartsModel.updateOne({ idUser: userId }, { $pull: { listProduct: { _id: listCartsUser[0].listProduct[i]._id } } })
+                listCarts = await cartsModel.findOneAndUpdate({ idUser: userId }, { $pull: { listProduct: { _id: listCartsUser[0].listProduct[i]._id } } }, {
+                    returnOriginal: false
+                })
             } else if (!listCartsUser[0].listProduct[i].idProduct) {
-                listCarts = await cartsModel.updateOne({ idUser: userId }, { $pull: { listProduct: { idProduct: undefined } } })
+                listCarts = await cartsModel.findOneAndUpdate({ idUser: userId }, { $pull: { listProduct: { idProduct: undefined } } }, {
+                    returnOriginal: false
+                })
             }
         }
         res.json({ listCarts, listCartsUser });
@@ -578,7 +582,7 @@ exports.createOrderUser = async function (req, res) {
             );
         }
         let clearCartsUser = await cartsModel.updateOne(
-            { idUser: req.body.idUser },
+            { idUser: req.user._id },
             { listProduct: [] }
         );
         res.json(newOrderUser);
