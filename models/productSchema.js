@@ -29,6 +29,13 @@ const productSchema = mongoose.Schema(
     }, { collection: 'product' }
 )
 
+productSchema.methods.checkStorage = async function () {
+    if (this.storage < 0) {
+        this.storage = 0
+        this.save()
+    }
+}
+
 let productModel = mongoose.model('product', productSchema)
 
 module.exports = productModel

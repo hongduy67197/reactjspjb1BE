@@ -576,10 +576,11 @@ exports.createOrderUser = async function (req, res) {
         let olderQuality = listProduct[0].listProduct;
         for (let elm of olderQuality) {
             let CartsQuality = elm.quantity;
-            await productModel.updateOne(
+            let productAfterUpdate = await productModel.findOneAndUpdate(
                 { _id: elm.idProduct },
-                { $inc: { storage: -CartsQuality } }
+                { $inc: { storage: -CartsQuality } }, { new: true }
             );
+            await productAfterUpdate.checkStorage()
         }
         let clearCartsUser = await cartsModel.updateOne(
             { idUser: req.user._id },

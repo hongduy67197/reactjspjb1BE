@@ -365,7 +365,7 @@ exports.editProduct = async function (req, res) {
     try {
         let editProduct;
         if (req.file) {
-            editProduct = await productModel.updateOne(
+            editProduct = await productModel.findOneAndUpdate(
                 { _id: req.params.idProduct },
                 {
                     idProductCode: req.body.idProductCode,
@@ -385,10 +385,11 @@ exports.editProduct = async function (req, res) {
                     suggest: req.body.suggest,
                     icon: req.body.icon,
                     countSold: req.body.countSold,
-                }
+                },
+                { new: true }
             );
         } else {
-            editProduct = await productModel.updateOne(
+            editProduct = await productModel.findOneAndUpdate(
                 { _id: req.params.idProduct },
                 {
                     idProductCode: req.body.idProductCode,
@@ -408,9 +409,11 @@ exports.editProduct = async function (req, res) {
                     suggest: req.body.suggest,
                     icon: req.body.icon,
                     countSold: req.body.countSold,
-                }
+                },
+                { new: true }
             );
         }
+        await editProduct.checkStorage()
         res.json(editProduct);
     } catch (error) {
         console.log(error);
