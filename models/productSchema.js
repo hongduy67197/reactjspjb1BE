@@ -29,7 +29,7 @@ const productSchema = mongoose.Schema(
     }, { collection: 'product' }
 )
 
-productSchema.methods.checkStorage = function () {
+productSchema.methods.checkStorage = async function () {
     if (this.storage < 0) {
         this.storage = 0
         this.save()
