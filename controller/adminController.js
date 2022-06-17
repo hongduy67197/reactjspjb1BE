@@ -18,24 +18,25 @@ const sliderModel = require("../models/sliderSchema");
 
 exports.adminLogin = async function (req, res) {
     try {
+        console.log(21, req.body);
         const { email, password } = req.body
         const userCheck = await userModel.findOne({ email })
-        const matchPasswordUser = await comparePassword(password, userCheck.password)
-        if (!userCheck) {
-            return res.json({ status: 'email or password undifind' })
-        } else if (!userCheck.email) {
-            return res.json({ status: 'account not avilable yet' })
-        } else if (!matchPasswordUser) {
-            return res.json({ status: 'undifind password' })
-        } else if (userCheck && matchPasswordUser && userCheck.role != 'admin') {
-            return res.json({ status: 'your account not enought role' })
-        } else if (userCheck && matchPasswordUser && userCheck.role == 'admin') {
-            let token = jwt.sign({ id: userCheck._id }, "projectFEB1", { expiresIn: 10 })
-            await userModel.updateOne({ _id: userCheck._id }, { token })
-            res.json({
-                data: { token: token, role: userCheck.role, userData: userCheck },
-                mess: 'oke',
-            })
+        if (userCheck) {
+            const matchPasswordUser = await comparePassword(password, userCheck.password)
+            if (!matchPasswordUser) {
+                return res.json({ status: 'undifind password' })
+            } else if (userCheck && matchPasswordUser && userCheck.role != 'admin') {
+                return res.json({ status: 'your account not enought role' })
+            } else if (userCheck && matchPasswordUser && userCheck.role == 'admin') {
+                let token = jwt.sign({ id: userCheck._id }, "projectFEB1", { expiresIn: 10 })
+                await userModel.updateOne({ _id: userCheck._id }, { token })
+                res.json({
+                    data: { token: token, role: userCheck.role, userData: userCheck },
+                    mess: 'oke',
+                })
+            }
+        } else {
+            return res.json({ status: 'email is not available' })
         }
     } catch (error) {
         console.log(error);
