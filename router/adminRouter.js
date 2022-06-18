@@ -10,7 +10,7 @@ const iconRouter = require('./adminIconRouter');
 const authRouter = require('./adminAuthRouter')
 const { checkRoleUser } = require('../midderware/auth');
 router.use('/auth', authRouter)
-// router.use(checkRoleUser)
+router.use(checkRoleUser)
 router.use('/categories', categoriesRouter);
 router.use('/productcode', productCodeRouetr)
 router.use('/product', productRouyer)
