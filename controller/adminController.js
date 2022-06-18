@@ -514,7 +514,9 @@ exports.getListOrderAd = async function (req, res) {
                 }
             }
         }
-        res.json({ listOrderAd, fixListOrder })
+        let listAllOrder = await orderModel.find({ status: req.query.status })
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } })
+        res.json(listAllOrder)
     } catch (error) {
         console.log(error);
         res.json(error)
