@@ -503,7 +503,20 @@ exports.getListOrderAd = async function (req, res) {
     try {
         let listOrderAd = await orderModel.find()
             .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } })
-        res.json(listOrderAd);
+        let fixListOrder
+        for (let i = 0; i < listOrderAd.length; i++) {
+            for (let j = 0; j < listOrderAd[i].listProduct.length; j++) {
+                if (listOrderAd[i].listProduct[j].idProduct == null) {
+                    console.log(511, listOrderAd[i]._id);
+                    fixListOrder = await orderModel.findOneAndUpdate({ _id: listOrderAd[i]._id }, { $pull: { listProduct: { _id: listOrderAd[i].listProduct[j]._id } } }, {
+                        returnOriginal: false
+                    })
+                }
+            }
+        }
+        let listAllOrder = await orderModel.find({ status: req.query.status })
+            .populate({ path: "listProduct.idProduct", populate: { path: 'idProductCode' } })
+        res.json(listAllOrder)
     } catch (error) {
         console.log(error);
         res.json(error)
