@@ -21,17 +21,17 @@ async function sendEMail(id, email, codeCheck) {
         service: 'gmail',
         auth: {
             user: 'btprojectbootcam1@gmail.com',
-            pass: 'Anxiety16092020'
-        }
-    })
-
-    let info = await transporter.sendMail(
+            pass: 'uznpynhqoowffvvf'
+        },
+        port: 465,
+        host: 'smtp.gmail.com'
+    }).sendMail(
         {
             from: 'btprojectbootcam1@gmail.com',
             to: email,
             subject: 'Hello ✔',
             text: 'Email registered successfully',
-            html: `<a href=http://localhost:3150/user/${email}/${codeCheck}>click here to complete register</a>`,
+            html: `<a href=http://localhost:3150/user/CheckMail/${email}/${codeCheck}>click here to complete register</a>`,
         },
         function (err, res) {
             if (err) {
