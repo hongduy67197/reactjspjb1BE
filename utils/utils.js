@@ -16,7 +16,7 @@ function generateCode() {
     return Math.random().toString().substring(2, 8);
 }
 
-async function sendEMail(id, email, codeCheck) {
+function sendEMail(id, email, codeCheck) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
