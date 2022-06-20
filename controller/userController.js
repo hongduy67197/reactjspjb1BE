@@ -32,7 +32,7 @@ exports.register = async function (req, res) {
             await sendEMail(newUser._id, email, codeCheck.getCode());
             newUser.code = codeCheck.getCode();
             await newUser.save();
-            res.status(200).json({ message: "create user success" });
+            return res.status(200).json({ message: "create user success" });
         }
     } catch (error) {
         res.json(error);
