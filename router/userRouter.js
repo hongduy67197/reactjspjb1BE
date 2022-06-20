@@ -23,6 +23,8 @@ const upload = multer({ storage: storage })
 // user
 router.post('/register', userController.register)
 router.post('/login', userController.login)
+router.post('/checkCode', userController.checkCodeMail)
+router.post('/forgotPass', userController.forgotPassword)
 router.use('/CheckMail', userAccountRouter)
 
 // router.use(checkToken)

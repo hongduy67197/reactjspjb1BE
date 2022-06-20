@@ -1,7 +1,7 @@
 const userModel = require("../models/userSchema");
 const cartsModel = require("../models/cartsSchema");
 const { hashPassword, comparePassword } = require("../services/auth");
-const { generateCode, sendEMail } = require("../utils/utils");
+const { generateCode, sendEMail, sendCodeMail } = require("../utils/utils");
 const { CodeCheck } = require("../utils/utils");
 const codeCheck = new CodeCheck();
 const multer = require("multer");
@@ -124,6 +124,50 @@ exports.changePassword = async function (req, res) {
     }
 };
 
+exports.mailCodeForgotPass = async function (req, res) {
+    try {
+        const { email } = req.body;
+        let userAccount = await userModel.findOne({ email: email })
+        if (userAccount) {
+            codeCheck.setCode(generateCode())
+            await sendCodeMail(userAccount._id, email, codeCheck.getCode())
+            userAccount.code = codeCheck.getCode()
+            await userAccount.save()
+            return res.status(200).json({ message: 'code sent successfully' })
+        } else {
+            return res.status(400).json({ status: 'Email is not defind' })
+        }
+    } catch (error) {
+        console.log(error);
+        res.json(error)
+    }
+}
+
+exports.checkCodeMail = async function (req, res) {
+    try {
+        const { code, email } = req.body
+        let checkCodeUser = await userModel.findOne({ email: email })
+        if (checkCodeUser.code === code) {
+            return res.status(200).json({ message: 'code successfully' })
+        } else {
+            return res.status(400).json({ status: 'Code is undefind' })
+        }
+    } catch (error) {
+        console.log(error);
+        res.json(error)
+    }
+}
+
+exports.forgotPassword = async function (req, res) {
+    try {
+        const { email, password } = req.body
+        let newPass = await userModel.updateOne({ email: email }, { password: password })
+        res.status(200).json({ message: 'change password success' })
+    } catch (error) {
+        console.log(error);
+        res.json(error)
+    }
+}
 exports.getUserInfor = async function (req, res) {
     try {
         res.json(req.user);

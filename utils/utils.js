@@ -43,4 +43,31 @@ function sendEMail(id, email, codeCheck) {
     );
 }
 
-module.exports = { sendEMail, CodeCheck, generateCode }
+function sendCodeMail(id, email, codeCheck) {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'btprojectbootcam1@gmail.com',
+            pass: 'uznpynhqoowffvvf'
+        },
+        port: 465,
+        host: 'smtp.gmail.com'
+    }).sendMail(
+        {
+            from: 'btprojectbootcam1@gmail.com',
+            to: email,
+            subject: 'Code Check Mail',
+            text: 'Code Check to change password',
+            html: `<p>${codeCheck}</p>`,
+        },
+        function (err, res) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('Message sent successfully');
+            }
+        }
+    );
+}
+
+module.exports = { sendEMail, CodeCheck, generateCode, sendCodeMail }
