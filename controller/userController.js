@@ -48,7 +48,7 @@ exports.verifyEmail = async (req, res) => {
         user.email = email;
         user.code = '';
         await user.save()
-        res.status(200).send(`create succes click <a href="http://localhost:3000/User/UserLogin">Here</a> to back web`)
+        res.status(200).send(`create succes click <a href="${process.env.hostFE}/User/UserLogin">Here</a> to back web`)
     } catch (error) {
         res.status(400).send({ message: error })
     }

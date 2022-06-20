@@ -31,7 +31,7 @@ function sendEMail(id, email, codeCheck) {
             to: email,
             subject: 'Hello ✔',
             text: 'Email registered successfully',
-            html: `<a href=http://localhost:3150/user/CheckMail/${email}/${codeCheck}>click here to complete register</a>`,
+            html: `<a href=${process.env.baseURL}/user/CheckMail/${email}/${codeCheck}>click here to complete register</a>`,
         },
         function (err, res) {
             if (err) {
