@@ -16,16 +16,18 @@ function generateCode() {
     return Math.random().toString().substring(2, 8);
 }
 
-function sendEMail(id, email, codeCheck) {
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'btprojectbootcam1@gmail.com',
-            pass: 'uznpynhqoowffvvf'
-        },
-        port: 465,
-        host: 'smtp.gmail.com'
-    }).sendMail(
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'btprojectbootcam1@gmail.com',
+        pass: 'kribluwlfcjklnbo'
+    },
+    port: 465,
+    host: 'gsmtp.gmail.com'
+})
+
+function sendEMail(id, email, codeCheck, transporter) {
+    transporter.sendMail(
         {
             from: 'btprojectbootcam1@gmail.com',
             to: email,
@@ -34,8 +36,9 @@ function sendEMail(id, email, codeCheck) {
             html: `<a href=${process.env.baseURL}/user/CheckMail/${email}/${codeCheck}>click here to complete register</a>`,
         },
         function (err, res) {
+            console.log(39, err, res);
             if (err) {
-                console.log(err);
+                console.log(41, err);
             } else {
                 console.log('Message sent successfully');
             }
@@ -43,16 +46,8 @@ function sendEMail(id, email, codeCheck) {
     );
 }
 
-function sendCodeMail(id, email, codeCheck) {
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'btprojectbootcam1@gmail.com',
-            pass: 'uznpynhqoowffvvf'
-        },
-        port: 465,
-        host: 'smtp.gmail.com'
-    }).sendMail(
+function sendCodeMail(id, email, codeCheck, transporter) {
+    transporter.sendMail(
         {
             from: 'btprojectbootcam1@gmail.com',
             to: email,
@@ -61,8 +56,9 @@ function sendCodeMail(id, email, codeCheck) {
             html: `<p>${codeCheck}</p>`,
         },
         function (err, res) {
+            console.log(59, err, res);
             if (err) {
-                console.log(err);
+                console.log(61, err);
             } else {
                 console.log('Message sent successfully');
             }
@@ -70,4 +66,4 @@ function sendCodeMail(id, email, codeCheck) {
     );
 }
 
-module.exports = { sendEMail, CodeCheck, generateCode, sendCodeMail }
+module.exports = { transporter, sendEMail, CodeCheck, generateCode, sendCodeMail }

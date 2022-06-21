@@ -1,7 +1,7 @@
 const userModel = require("../models/userSchema");
 const cartsModel = require("../models/cartsSchema");
 const { hashPassword, comparePassword } = require("../services/auth");
-const { generateCode, sendEMail, sendCodeMail } = require("../utils/utils");
+const { transporter, generateCode, sendEMail, sendCodeMail } = require("../utils/utils");
 const { CodeCheck } = require("../utils/utils");
 const codeCheck = new CodeCheck();
 const multer = require("multer");
@@ -25,12 +25,13 @@ exports.register = async function (req, res) {
         } else {
             const hashed = await hashPassword(password);
             const newUser = await userModel.create({
+                email: email,
                 password: hashed,
             });
             const newCart = await cartsModel.create({ idUser: newUser._id });
-            codeCheck.setCode(generateCode());
-            await sendEMail(newUser._id, email, codeCheck.getCode());
-            newUser.code = codeCheck.getCode();
+            // codeCheck.setCode(generateCode());
+            // await sendEMail(newUser._id, email, codeCheck.getCode(), transporter);
+            // newUser.code = codeCheck.getCode();
             await newUser.save();
             return res.status(200).json({ message: "create user success" });
         }
@@ -130,7 +131,7 @@ exports.mailCodeForgotPass = async function (req, res) {
         let userAccount = await userModel.findOne({ email: email })
         if (userAccount) {
             codeCheck.setCode(generateCode())
-            await sendCodeMail(userAccount._id, email, codeCheck.getCode())
+            await sendCodeMail(userAccount._id, email, codeCheck.getCode(), transporter)
             userAccount.code = codeCheck.getCode()
             await userAccount.save()
             return res.status(200).json({ message: 'code sent successfully' })
