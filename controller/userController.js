@@ -129,13 +129,13 @@ exports.mailCodeForgotPass = async function (req, res) {
     try {
         const { email } = req.body;
         let userAccount = await userModel.findOne({ email: email })
-        if (userAccount) {
+        if (userAccount != null) {
             codeCheck.setCode(generateCode())
             await sendCodeMail(userAccount._id, email, codeCheck.getCode(), transporter)
             userAccount.code = codeCheck.getCode()
             await userAccount.save()
             return res.status(200).json({ message: 'code sent successfully' })
-        } else {
+        } else if (userAccount == null) {
             return res.status(400).json({ status: 'Email is not defind' })
         }
     } catch (error) {
