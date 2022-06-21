@@ -25,13 +25,13 @@ exports.register = async function (req, res) {
         } else {
             const hashed = await hashPassword(password);
             const newUser = await userModel.create({
-                email: email,
+                // email: email,
                 password: hashed,
             });
             const newCart = await cartsModel.create({ idUser: newUser._id });
-            // codeCheck.setCode(generateCode());
-            // await sendEMail(newUser._id, email, codeCheck.getCode(), transporter);
-            // newUser.code = codeCheck.getCode();
+            codeCheck.setCode(generateCode());
+            await sendEMail(newUser._id, email, codeCheck.getCode(), transporter);
+            newUser.code = codeCheck.getCode();
             await newUser.save();
             return res.status(200).json({ message: "create user success" });
         }
