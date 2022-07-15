@@ -2,6 +2,8 @@ const userModel = require("../models/userSchema");
 const cartsModel = require("../models/cartsSchema");
 const { hashPassword, comparePassword } = require("../services/auth");
 const { transporter, generateCode, sendEMail, sendCodeMail } = require("../utils/utils");
+const { validateEmail, validatePassPartern } = require('../utils/validate')
+const { testFillter } = require('../services/productSearch')
 const { CodeCheck } = require("../utils/utils");
 const codeCheck = new CodeCheck();
 const multer = require("multer");
@@ -19,21 +21,23 @@ const bcrypt = require("bcryptjs");
 exports.register = async function (req, res) {
     try {
         const { password, email } = req.body;
-        const alreadyExistEmail = await userModel.findOne({ email: email });
-        if (alreadyExistEmail) {
-            return res.status(400).json({ status: "Email already exists" });
-        } else {
-            const hashed = await hashPassword(password);
-            const newUser = await userModel.create({
-                // email: email,
-                password: hashed,
-            });
-            const newCart = await cartsModel.create({ idUser: newUser._id });
-            codeCheck.setCode(generateCode());
-            await sendEMail(newUser._id, email, codeCheck.getCode(), transporter);
-            newUser.code = codeCheck.getCode();
-            await newUser.save();
-            return res.status(200).json({ message: "create user success" });
+        if (validateEmail(email) && validatePassPartern(password)) {
+            const alreadyExistEmail = await userModel.findOne({ email: email });
+            if (alreadyExistEmail) {
+                return res.status(400).json({ status: "Email already exists" });
+            } else {
+                const hashed = await hashPassword(password);
+                const newUser = await userModel.create({
+                    // email: email,
+                    password: hashed,
+                });
+                const newCart = await cartsModel.create({ idUser: newUser._id });
+                codeCheck.setCode(generateCode());
+                await sendEMail(newUser._id, email, codeCheck.getCode(), transporter);
+                newUser.code = codeCheck.getCode();
+                await newUser.save();
+                return res.status(200).json({ message: "create user success" });
+            }
         }
     } catch (error) {
         res.json(error);
@@ -58,22 +62,41 @@ exports.verifyEmail = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await userModel.findOne({ email });
-        const matchPassword = await comparePassword(password, user.password);
-        if (!user) {
-            return res.json({ status: "user or password undifind" });
-        } else if (!user.email) {
-            return res.json({ status: "account not avilable yet" });
-        } else if (!matchPassword) {
-            return res.json({ status: "undifind password" });
-        } else {
-            let token = jwt.sign({ id: user._id }, "projectFEB1", { expiresIn: 10 });
-            await userModel.updateOne({ _id: user._id }, { token });
-            // res.cookie("user", token, { expires: new Date(Date.now() + 900000) });
-            res.json({
-                data: { token: token, role: user.role, userData: user },
-                mess: "oke",
-            });
+        if (validateEmail(email) && validatePassPartern(password)) {
+
+            const user = await userModel.findOne({ email });
+            if (!user) {
+                return res.json({ status: "user or password undifind" });
+            } else {
+                if (user.timeLock > Date.now()) {
+                    return res.json({ status: 'account was lock please back at 1 hour later' })
+                } else if (user.loginExpired > new Date()) {
+                    return res.json({ status: 'account was login at another device' })
+                }
+                else {
+                    const matchPassword = await comparePassword(password, user.password);
+                    if (!matchPassword) {
+                        if (user.wrongCount == 4) {
+                            await userModel.updateOne({ _id: user._id }, { wrongCount: 0, timeLock: Date.now() + 3600 * 1000 });
+                            return res.json({ status: "try 1 hour late" });
+                        } else {
+                            await userModel.updateOne({ _id: user._id }, { $inc: { wrongCount: 1 } });
+                            return res.json({ status: 'undifind password' });
+                        }
+                    } else {
+                        let token = jwt.sign({ id: user._id }, "testNodemailer", { expiresIn: 900000 });
+                        await userModel.updateOne({ _id: user._id }, {
+                            token: token, wrongCount: 0,
+                            loginExpired: new Date(Date.now() + 900000)
+                        });
+                        res.cookie("user", token, { expires: new Date(Date.now() + 900000) });
+                        res.json({
+                            data: { token: token, userData: user },
+                            mess: "oke",
+                        });
+                    }
+                }
+            }
         }
     } catch (error) {
         res.json(error);
@@ -86,6 +109,7 @@ exports.logOut = async function (req, res) {
             { _id: req.user._id },
             {
                 token: "",
+                loginExpired: new Date()
             }
         );
         res.status(200).json({ message: "logout success" });
@@ -107,17 +131,21 @@ exports.changePassword = async function (req, res) {
         let checkPassword = await bcrypt.compare(inputPassword, oldPassword);
         let newPasswordBase;
         if (checkPassword == true) {
-            newPasswordBase = bcrypt.hashSync(newPassword, 10);
-            await userModel.updateOne(
-                { _id: req.user._id },
-                {
-                    password: newPasswordBase,
-                    token: "",
-                }
-            );
-            res.status(200).json("change password success");
+            if (validatePassPartern(newPassword)) {
+                newPasswordBase = bcrypt.hashSync(newPassword, 10);
+                await userModel.updateOne(
+                    { _id: req.user._id },
+                    {
+                        password: newPasswordBase,
+                        token: "",
+                    }
+                );
+                return res.status(200).json("change password success");
+            } else {
+                return res.status(404).json("new password was not success please get new password")
+            }
         } else {
-            res.status(400).json("your password is not right");
+            return res.status(400).json("your password is not right");
         }
     } catch (error) {
         console.log(error);
@@ -128,15 +156,19 @@ exports.changePassword = async function (req, res) {
 exports.mailCodeForgotPass = async function (req, res) {
     try {
         const { email } = req.body;
-        let userAccount = await userModel.findOne({ email: email })
-        if (userAccount != null) {
-            codeCheck.setCode(generateCode())
-            await sendCodeMail(userAccount._id, email, codeCheck.getCode(), transporter)
-            userAccount.code = codeCheck.getCode()
-            await userAccount.save()
-            return res.status(200).json({ message: 'code sent successfully' })
-        } else if (userAccount == null) {
-            return res.status(400).json({ status: 'Email is not defind' })
+        if (validateEmail(email)) {
+            let userAccount = await userModel.findOne({ email: email })
+            if (userAccount != null) {
+                codeCheck.setCode(generateCode())
+                await sendCodeMail(userAccount._id, email, codeCheck.getCode(), transporter)
+                userAccount.code = codeCheck.getCode()
+                await userAccount.save()
+                return res.status(200).json({ message: 'code sent successfully' })
+            } else if (userAccount == null) {
+                return res.status(400).json({ status: 'Email is not defind' })
+            }
+        } else {
+            return res.status(404).json({ message: "email is not right" })
         }
     } catch (error) {
         console.log(error);
@@ -162,8 +194,12 @@ exports.checkCodeMail = async function (req, res) {
 exports.forgotPassword = async function (req, res) {
     try {
         const { email, password } = req.body
-        let newPass = await userModel.updateOne({ email: email }, { password: password })
-        res.status(200).json({ message: 'change password success' })
+        if (validateEmail(email) && validatePassPartern(password)) {
+            await userModel.updateOne({ email: email }, { password: password })
+            res.status(200).json({ message: 'change password success' })
+        } else {
+            return res.status(400).json({ message: 'email or password is not right' })
+        }
     } catch (error) {
         console.log(error);
         res.json(error)
@@ -712,5 +748,14 @@ exports.refeshToken = async function (req, res) {
     } catch (error) {
         console.log(error);
         res.json(error)
+    }
+}
+
+exports.testNewSearch = async function (req, res) {
+    try {
+        let test = await testFillter(req.query)
+        res.json(test)
+    } catch (error) {
+        console.log(error);
     }
 }

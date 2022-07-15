@@ -39,6 +39,7 @@ router.use('/carts', userCartsRouter)
 
 // productCode
 router.get('/fillter', userController.getFillterProductCode)
+router.get('/testFillter', userController.testNewSearch)
 router.get('/list', userController.getAdllProductCode)
 router.get('/search', userController.getListSearchInput)
 // product

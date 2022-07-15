@@ -11,6 +11,9 @@ const userSchema = mongoose.Schema(
         code: String,
         token: String,
         birthDay: Date,
+        wrongCount: Number,
+        timeLock: Date,
+        loginExpired: Date,
         role: { type: String, default: 'user' }
     }, { collection: 'users' }
 )
