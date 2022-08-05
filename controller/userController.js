@@ -62,42 +62,44 @@ exports.verifyEmail = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (validateEmail(email) && validatePassPartern(password)) {
+        // if (validateEmail(email) && validatePassPartern(password)) {
 
-            const user = await userModel.findOne({ email });
-            if (!user) {
-                return res.json({ status: "user or password undifind" });
-            } else {
-                if (user.timeLock > Date.now()) {
-                    return res.json({ status: 'account was lock please back at 1 hour later' })
-                } else if (user.loginExpired > new Date()) {
-                    return res.json({ status: 'account was login at another device' })
-                }
-                else {
-                    const matchPassword = await comparePassword(password, user.password);
-                    if (!matchPassword) {
-                        if (user.wrongCount == 4) {
-                            await userModel.updateOne({ _id: user._id }, { wrongCount: 0, timeLock: Date.now() + 3600 * 1000 });
-                            return res.json({ status: "try 1 hour late" });
-                        } else {
-                            await userModel.updateOne({ _id: user._id }, { $inc: { wrongCount: 1 } });
-                            return res.json({ status: 'undifind password' });
-                        }
+        const user = await userModel.findOne({ email });
+        console.log(user);
+        if (!user) {
+            return res.json({ status: "user or password undifind" });
+        } else {
+            if (user.timeLock > Date.now()) {
+                return res.json({ status: 'account was lock please back at 1 hour later' })
+            }
+            // else if (user.loginExpired > new Date()) {
+            //     return res.json({ status: 'account was login at another device' })
+            // }
+            else {
+                const matchPassword = await comparePassword(password, user.password);
+                if (!matchPassword) {
+                    if (user.wrongCount == 4) {
+                        await userModel.updateOne({ _id: user._id }, { wrongCount: 0, timeLock: Date.now() + 3600 * 1000 });
+                        return res.json({ status: "try 1 hour late" });
                     } else {
-                        let token = jwt.sign({ id: user._id }, "testNodemailer", { expiresIn: 900000 });
-                        await userModel.updateOne({ _id: user._id }, {
-                            token: token, wrongCount: 0,
-                            loginExpired: new Date(Date.now() + 900000)
-                        });
-                        res.cookie("user", token, { expires: new Date(Date.now() + 900000) });
-                        res.json({
-                            data: { token: token, userData: user },
-                            mess: "oke",
-                        });
+                        await userModel.updateOne({ _id: user._id }, { $inc: { wrongCount: 1 } });
+                        return res.json({ status: 'undifind password' });
                     }
+                } else {
+                    let token = jwt.sign({ id: user._id }, "testNodemailer", { expiresIn: 900000 });
+                    await userModel.updateOne({ _id: user._id }, {
+                        token: token, wrongCount: 0,
+                        loginExpired: new Date(Date.now() + 900000)
+                    });
+                    res.cookie("user", token, { expires: new Date(Date.now() + 900000) });
+                    res.json({
+                        data: { token: token, userData: user },
+                        mess: "oke",
+                    });
                 }
             }
         }
+        // }
     } catch (error) {
         res.json(error);
     }

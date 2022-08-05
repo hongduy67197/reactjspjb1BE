@@ -22,4 +22,31 @@ function flatten(ary) {
     return ret;
 }
 
-module.exports = { checkArray, flatten }
+const createPriceQuery = (min, max) => {
+    if (min && max) return { price: { $gte: min, $lte: max } };
+    if (min && !max) return { price: { $gte: min } };
+    if (!min && max) return { price: { $lte: max } };
+}
+
+function filterDuplicatesInArray(array) {
+    let result = array.filter((filterValue, filterIndex) => {
+        let index = array.findIndex((findValue) => {
+            return findValue._id.toString() === filterValue._id.toString();
+        })
+        return index === filterIndex
+    })
+    return result
+}
+
+function satisfiedProductList(listProductCode, listProduct) {
+    let result = listProductCode.filter((filterValue, filterIndex) => {
+        let idCode = filterValue._id.toString();
+        let index = listProduct.findIndex((value) => {
+            return value.idProductCode.toString() === idCode
+        })
+        return index > -1
+    })
+    return result
+}
+
+module.exports = { createPriceQuery, checkArray, flatten, satisfiedProductList, filterDuplicatesInArray }

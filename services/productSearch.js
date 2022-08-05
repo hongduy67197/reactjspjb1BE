@@ -1,8 +1,9 @@
 const producCodeModel = require('../models/productCodeSchema')
 const categoriesModel = require('../models/categoriesSchema')
 const productModel = require('../models/productSchema')
-const { checkArray, flatten } = require('../utils/checkArray')
+const { checkArray, flatten, createPriceQuery, satisfiedProductList, filterDuplicatesInArray } = require('../utils/checkArray')
 const fs = require('fs')
+
 exports.filterProductCode = async function (req, res) {
     try {
         let listProduct;
@@ -46,17 +47,42 @@ exports.filterProductCode = async function (req, res) {
 
 exports.testFillter = async function (request) {
     try {
+        // let testList = []
         console.log(request);
-        let listProduct = [];
+        // let listCode = ['design', 'idCategories']
+        // let query = '{'
+        // for (let k in request) {
+        //     if (listCode.indexOf(k) !== -1) {
+        //         console.log(56, query);
+        //         let a = await producCodeModel.find({ query })
+        //         testList.push(a)
+        //     } else {
+
+        //     }
+        // }
+        // let b = flatten(testList)
+        // console.log(62, b.length);
+        // fs.writeFile("data.json", JSON.stringify(b), (err) => {
+        //     if (err) {
+        //         console.log(err);
+        //     }
+        // })
+        // let check = filterDuplicatesInArray(b)
+        // console.log(64, check.length);
+
+
+        let listProduct;
         let list1;
         let list2;
         let list3;
         let list4;
         let list5;
         let list6;
+        let list7;
+        let list8;
         let data = [];
         if (request.idCategories) {
-            list1 = await producCodeModel.find({ idCategories: request.idCategories })
+            list1 = await producCodeModel.find({ idCategories: { $in: request.idCategories } })
         }
         if (request.name) {
             list2 = await producCodeModel.find(
@@ -65,40 +91,38 @@ exports.testFillter = async function (request) {
         }
         if (request.priceRange) {
             let listProductfollowPriceRange = await productModel.find(
-                { priceRange: request.priceRange }
+                { priceRange: { $in: request.priceRange } }
             )
-            let datatest = []
-            let allProductCode = await producCodeModel.find()
-            for (let i = 0; i < listProductfollowPriceRange.length; i++) {
-                for (let j = 0; j < allProductCode.length; j++) {
-                    if (listProductfollowPriceRange[i].idProductCode === allProductCode[j]._id) {
-                        datatest.push(allProductCode[j])
-                    }
-                }
-            }
+            let allProductCode = await producCodeModel.find().populate('idCategories')
+            list3 = satisfiedProductList(allProductCode, listProductfollowPriceRange)
         }
         if (request.productType) {
-            list4 = await producCodeModel.find({ productType: request.productType })
+            list4 = await producCodeModel.find({ productType: { $in: request.productType } })
         }
         if (request.design) {
-            list5 = await producCodeModel.find({ design: request.design })
+            list5 = await producCodeModel.find({ design: { $in: request.design } })
         }
         if (request.max || request.min) {
-            let allProductCode = await producCodeModel.find()
-            if (request.max && request.min) {
-                let listProductMaxMin = await productModel.find(
-                    { price: { $lte: request.max, $gte: request.min } }
-                )
-                for (let i = 0; i < listProductMaxMin.length; i++) {
-
-                }
-            } else if (request.max && !request.min) {
-                console.log(234);
-            } else if (!request.max && request.min) {
-                console.log(345);
-            }
+            let query = createPriceQuery(request.min, request.max)
+            let allProductCode = await producCodeModel.find().populate('idCategories')
+            let listProductMaxandMin = await productModel.find(query)
+            list6 = satisfiedProductList(allProductCode, listProductMaxandMin)
         }
-        if (list1 || list2 || list3 || list4 || list5 || list6) {
+        if (request.ram) {
+            let listProductfollowRam = await productModel.find(
+                { ram: { $in: request.ram } }
+            )
+            let allProductCode = await producCodeModel.find().populate('idCategories')
+            list7 = satisfiedProductList(allProductCode, listProductfollowRam)
+        }
+        if (request.rom) {
+            let listProductfollowRam = await productModel.find(
+                { rom: { $in: request.rom } }
+            )
+            let allProductCode = await producCodeModel.find().populate('idCategories')
+            list8 = satisfiedProductList(allProductCode, listProductfollowRam)
+        }
+        if (list1 || list2 || list3 || list4 || list5 || list6 || list7 || list8) {
             if (checkArray(list1) == true) {
                 data.push(list1)
             }
@@ -117,20 +141,15 @@ exports.testFillter = async function (request) {
             if (checkArray(list6) == true) {
                 data.push(list6)
             }
+            if (checkArray(list7) == true) {
+                data.push(list7)
+            }
+            if (checkArray(list8) == true) {
+                data.push(list8)
+            }
             let a = flatten(data)
-
-            // fs.writeFile("data.json", JSON.stringify(a), (err) => {
-            //     if (err) {
-            //         console.log(err);
-            //     }
-            // })
-            let result = a.filter((filterValue, filterIndex) => {
-                let index = a.findIndex((findValue) => {
-                    return findValue._id === filterValue._id;
-                })
-                console.log(index.length);
-                return index === filterIndex
-            })
+            listProduct = filterDuplicatesInArray(a)
+            console.log(listProduct.length);
         } else {
             return "can't find any product! please try another select you want to search"
         }
